@@ -4,8 +4,9 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Mark } from './ui'
 
-const VIDEO_SRC = '/heroVideo.mp4'
-const POSTER_SRC = '/hq/vsl-poster.jpg' // frame at 0:06 of the video
+// "Introduction Agha Saad" (youtube.com/watch?v=e4okzv6PPoU), self-hosted so no YouTube player UI shows
+const VIDEO_SRC = '/hq/intro.mp4'
+const POSTER_SRC = '/hq/intro-poster.jpg' // the video's YouTube thumbnail
 
 // Shows a thumbnail with the WAGMI mark as the play button; the video only downloads once clicked.
 export default function Vsl() {
@@ -30,7 +31,7 @@ export default function Vsl() {
             className="group absolute inset-0 h-full w-full cursor-pointer"
           >
             <Image src={POSTER_SRC} alt="" fill sizes="(max-width: 880px) 100vw, 880px" className="object-cover" priority />
-            <span className="absolute inset-0 bg-[#0c1814]/45 transition-colors group-hover:bg-[#0c1814]/30" />
+            <span className="absolute inset-0 bg-[#0c1814]/20 transition-colors group-hover:bg-[#0c1814]/5" />
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_4px_18px_#0c1814] transition-transform duration-300 group-hover:scale-110">
               <Mark className="block h-24 w-24 max-[800px]:h-14 max-[800px]:w-14" />
             </span>

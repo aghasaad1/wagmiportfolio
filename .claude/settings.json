@@ -32,7 +32,20 @@
       "Bash(python -c \"import PIL; print\\(PIL.__version__\\)\")",
       "Bash(git mv *)",
       "Read(//c/Users/PC/AppData/Local/Temp/claude/c--Users-PC-Desktop-Hammad-wagmiportfolio/63d965b9-333e-4563-9de1-7774a1e7f1ec/scratchpad/**)",
-      "Bash(ffmpeg -v error -y -ss 6 -i public/heroVideo.mp4 -frames:v 1 -vf scale=1280:-1 -q:v 3 public/hq/vsl-poster.jpg)"
+      "Bash(ffmpeg -v error -y -ss 6 -i public/heroVideo.mp4 -frames:v 1 -vf scale=1280:-1 -q:v 3 public/hq/vsl-poster.jpg)",
+      "Bash(yt-dlp --version)",
+      "Bash(yt-dlp --skip-download --print \"%\\(title\\)s | %\\(channel\\)s | %\\(duration_string\\)s | %\\(width\\)sx%\\(height\\)s\" \"https://www.youtube.com/watch?v=e4okzv6PPoU\")",
+      "Bash(yt-dlp -q --no-warnings -f \"bv*[height<=1080][ext=mp4]+ba[ext=m4a]/b[height<=1080]\" --merge-output-format mp4 -o \"media/intro-1080p.%\\(ext\\)s\" \"https://www.youtube.com/watch?v=e4okzv6PPoU\")",
+      "Bash(ffprobe -v error -show_entries stream=codec_type,codec_name,width,height,bit_rate:format=duration -of compact media/intro-1080p.mp4)",
+      "Bash(yt-dlp --no-warnings -F \"https://www.youtube.com/watch?v=e4okzv6PPoU\")",
+      "Bash(yt-dlp -f \"137+140\" --simulate \"https://www.youtube.com/watch?v=e4okzv6PPoU\")",
+      "Bash(ffprobe -v error -show_entries stream=codec_name,width,height,bit_rate:format=duration,size -of compact media/intro-src.mp4)",
+      "Bash(curl -s -o yt-thumb.jpg -w \"%{http_code} %{size_download}\\\\n\" https://i.ytimg.com/vi/e4okzv6PPoU/maxresdefault.jpg)",
+      "Bash(python -c \"from PIL import Image; print\\(Image.open\\('yt-thumb.jpg'\\).size\\)\")",
+      "Bash(cp \"/c/Users/PC/AppData/Local/Temp/claude/c--Users-PC-Desktop-Hammad-wagmiportfolio/63d965b9-333e-4563-9de1-7774a1e7f1ec/scratchpad/yt-thumb.jpg\" public/hq/intro-poster.jpg && rm public/hq/vsl-poster.jpg && ls public/hq)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\PC\\AppData\\Local\\Temp\\claude\\c--Users-PC-Desktop-Hammad-wagmiportfolio\\63d965b9-333e-4563-9de1-7774a1e7f1ec\\scratchpad"
     ]
   }
 }
