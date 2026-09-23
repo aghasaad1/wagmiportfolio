@@ -1,0 +1,118 @@
+import { InquiryLink, type Topic } from './Inquiry'
+import { SectionHead, btn, btnGhost, h3, section } from './ui'
+
+type Pkg = {
+  tag: string
+  name: string
+  outcome: string
+  fit: string
+  plan: [string, string][]
+  yourPart: string
+  topic: Topic
+  featured?: boolean
+}
+
+const PACKAGES: Pkg[] = [
+  {
+    tag: '01 / Paid creative',
+    name: 'The 60X Creative Test',
+    outcome: 'Stop running out of ads to test.',
+    fit: 'For businesses that need more creative for their campaigns.',
+    plan: [
+      ['Plan', 'Angles and hooks built around your offer.'],
+      ['Produce', '20 core creatives. Three opening hooks each. 60 ad versions every month.'],
+      ['Improve', 'New versions informed by the campaign results you share.'],
+    ],
+    yourPart: 'Share your assets and ad results. You or your media buyer runs the campaigns.',
+    topic: 'Paid creative',
+  },
+  {
+    tag: '02 / Organic content',
+    name: '100 Pieces of Authority',
+    outcome: 'You run your business. We handle your content.',
+    fit: 'For experts whose content isn’t keeping up with their business.',
+    plan: [
+      ['Plan', 'Topics and scripts that explain your expertise, answer objections and introduce your offer.'],
+      ['Produce', 'Four long-form videos, around three native shorts weekly, plus clips, carousels and graphics. 100+ assets monthly.'],
+      ['Publish', 'Captions, scheduling and publishing across up to four platforms. Your editor and project manager handle delivery.'],
+    ],
+    yourPart: 'Record for 60 minutes each week using prepared scripts.',
+    topic: 'Organic content',
+  },
+  {
+    tag: '03 / Organic + paid',
+    name: 'The Attention to Acquisition System',
+    outcome: 'Get your content and ads working toward the same sale.',
+    fit: 'For businesses ready to grow through organic and paid.',
+    plan: [
+      ['Build your presence', 'The full organic service: 100+ assets, thumbnails and publishing across up to four platforms.'],
+      ['Supply your campaigns', '20 core paid creatives with three hooks each. 60 ad versions every month.'],
+      ['Learn from both', 'Turn effective organic topics into ads. Use paid results to guide the next content batch, with a monthly review.'],
+    ],
+    yourPart: 'Record weekly and share ad results. Your editor and project manager coordinate production.',
+    topic: 'Both',
+    featured: true,
+  },
+]
+
+export default function Packages() {
+  return (
+    <section
+      id="packages"
+      className={`${section} relative before:pointer-events-none before:absolute before:inset-y-0 before:-inset-x-[30px] before:-z-10 before:bg-[radial-gradient(ellipse_at_50%_260px,#27452c32,transparent_68%)] before:content-[''] max-[800px]:before:-inset-x-[15px]`}
+    >
+      <SectionHead
+        eyebrow="Three ways to work together"
+        title="What’s holding your content back?"
+        sub="Choose paid creative, organic content, or both."
+      />
+
+      <div className="grid grid-cols-3 items-stretch gap-4 max-[800px]:grid-cols-1">
+        {PACKAGES.map((p) => (
+          <article
+            key={p.name}
+            className={`flex flex-col rounded-[22px] border px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${
+              p.featured ? 'border-[#9eb99a75] bg-[#1b3023]' : 'border-[#f4f1d621] bg-[#13221a]'
+            }`}
+          >
+            <div className="text-[14px] font-bold uppercase tracking-[.12em] text-[#b0c2aa]">{p.tag}</div>
+            <h3 className={`${h3} mb-[22px] mt-[17px] min-h-[54px] text-[20px] max-[800px]:mb-5 max-[800px]:min-h-0 max-[800px]:max-w-[260px] max-[800px]:text-[21px]`}>
+              {p.name}
+            </h3>
+            <p className="mb-[19px] mt-0 min-h-[135px] text-[27px] font-bold leading-[1.22] tracking-[-.04em] max-[1000px]:min-h-[145px] max-[1000px]:text-[24px] max-[800px]:min-h-0 max-[800px]:max-w-[460px] max-[800px]:text-[29px]">
+              {p.outcome}
+            </p>
+            <p className="mb-6 mt-0 min-h-[50px] text-[14px] text-[#a9b7a7] max-[800px]:mb-[18px] max-[800px]:min-h-0">{p.fit}</p>
+            <ul className="m-0 list-none p-0">
+              {p.plan.map(([title, body]) => (
+                <li
+                  key={title}
+                  className="m-0 border-t border-[#f4f1d617] py-4 text-[15px] leading-[1.6] text-[#b7c4b0] max-[1000px]:text-[14px] max-[800px]:text-[16px]"
+                >
+                  <strong className="mb-[5px] block text-[15px] text-[#f4f1d6]">{title}</strong>
+                  {body}
+                </li>
+              ))}
+            </ul>
+            <p className="mb-[14px] mt-auto border-t border-[#f4f1d617] pt-[19px] text-[14px] text-[#b7c4b0] max-[800px]:mb-[15px] max-[800px]:text-[15px]">
+              <b className="text-[#f4f1d6]">Your part:</b> {p.yourPart}
+            </p>
+            <InquiryLink
+              topic={p.topic}
+              className={`${(p.featured ? btn : btnGhost)('gap-[22px] rounded-[12px] px-[10px] py-[13px] text-[14px] max-[1000px]:gap-[10px]')} mb-0 mt-[10px] w-full`}
+            >
+              Discuss this package <span>↗</span>
+            </InquiryLink>
+          </article>
+        ))}
+      </div>
+
+      <div className="mt-[22px] text-center text-[14px] text-[#a7b4a5]">
+        Not sure where to start?{' '}
+        <a href="#inquiry" className="border-b border-[#6f816b] text-[#f4f1d6]">
+          Tell us what’s getting in the way ↗
+        </a>
+      </div>
+    </section>
+  )
+}

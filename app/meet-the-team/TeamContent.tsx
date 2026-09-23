@@ -332,7 +332,7 @@ export default function TeamContent() {
 
         <div ref={revealRef}>
           <div ref={teamCirclesRef} style={{
-            padding: 'clamp(60px, 8vw, 100px) var(--pad)',
+            padding: 'clamp(42px, 5.5vw, 70px) var(--pad)',
             borderBottom: '1px solid var(--line2)',
           }}>
             <div style={{ maxWidth: 'var(--max)', margin: '0 auto' }}>
@@ -618,7 +618,7 @@ export default function TeamContent() {
 
           {/* Apply CTA - unchanged, keeps the orb glow */}
           <div style={{
-            padding: 'clamp(80px, 12vw, 140px) var(--pad)',
+            padding: 'clamp(56px, 8vw, 96px) var(--pad)',
             textAlign: 'center',
             position: 'relative',
             overflow: 'hidden',

@@ -1,0 +1,56 @@
+/*
+ * Base styles for the HQ design. Everything is scoped to html.hq so this file
+ * is inert when the legacy design is active. It also neutralises the unlayered
+ * base rules in app/globals.css that would otherwise beat Tailwind utilities.
+ */
+
+html.hq {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.hq { scroll-behavior: auto; }
+}
+
+/* globals.css has an unlayered `* { margin:0; padding:0 }` — hand spacing back to Tailwind. */
+.hq *, .hq *::before, .hq *::after {
+  margin: revert-layer;
+  padding: revert-layer;
+  scrollbar-width: auto;
+  scrollbar-color: auto;
+}
+
+.hq body {
+  margin: 0;
+  background: radial-gradient(ellipse 70% 650px at 48% 220px, #1a302438, transparent 85%), #0c1814;
+  color: #f4f1d6;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: visible;
+  cursor: auto;
+}
+
+/* Legacy grain overlay, footer and option styling */
+.hq body::after { content: none; }
+.hq footer { position: static; background: none; z-index: auto; clear: none; }
+.hq select option { background: #15241b; color: #f4f1d6; }
+
+.hq :is(a, button, summary) { -webkit-tap-highlight-color: transparent; }
+.hq :is(a, button, summary):focus-visible {
+  outline: 2px solid #f4f1d6;
+  outline-offset: 5px;
+}
+
+/* Finalized WAGMI silhouette, tinted via mask */
+.hq-mark {
+  display: inline-block;
+  background: #f4f1d6;
+  mask-image: url('/hq/wagmi-mark.svg');
+  mask-mode: alpha;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}

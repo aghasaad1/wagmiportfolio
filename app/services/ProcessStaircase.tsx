@@ -112,7 +112,7 @@ export default function ProcessStaircase({ process, onApplyClick, isMobile }: Pr
   if (isMobile) {
     return (
       <div style={{ background: 'var(--black)', borderBottom: '1px solid var(--line2)' }}>
-        <div style={{ padding: 'clamp(72px, 9vw, 112px) var(--pad) clamp(36px, 4.5vw, 52px)', maxWidth: 'var(--max)', margin: '0 auto' }}>
+        <div style={{ padding: 'clamp(48px, 6vw, 76px) var(--pad) clamp(28px, 3.5vw, 40px)', maxWidth: 'var(--max)', margin: '0 auto' }}>
           <div className="reveal" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--t4)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ width: '16px', height: '1px', background: 'var(--t4)', display: 'inline-block' }} />
             The Five Layers
@@ -174,7 +174,7 @@ export default function ProcessStaircase({ process, onApplyClick, isMobile }: Pr
       }}
     >
       {/* Heading (stays visible while pinned) */}
-      <div style={{ padding: 'clamp(72px, 9vw, 112px) var(--pad) clamp(36px, 4.5vw, 52px)', maxWidth: 'var(--max)', margin: '0 auto', width: '100%' }}>
+      <div style={{ padding: 'clamp(48px, 6vw, 76px) var(--pad) clamp(28px, 3.5vw, 40px)', maxWidth: 'var(--max)', margin: '0 auto', width: '100%' }}>
         <div className="reveal" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--t2)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ width: '16px', height: '1px', background: 'var(--green)', display: 'inline-block' }} />
           The Five Layers

@@ -1,337 +1,301 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useRef } from 'react'
+import Image from 'next/image'
 import { useGSAP } from '@gsap/react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import * as THREE from 'three'
-import CameraScene, { type WorldSize } from './CameraScene'
-import type { MouseInfluence } from './CameraModel'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
-/**
- * Layout is expressed in *fractions of the viewport*, then converted to world
- * units. The canvas is fixed full-viewport for the whole section (scene 1's
- * pin + scene 2's normal flow), so a fraction here always maps onto the same
- * screen position regardless of which scene is currently in view.
- */
-function getLayout(world: WorldSize) {
-  const narrow = world.w / world.h < 1.05
-  const fx = (f: number) => world.w * (f - 0.5) // 0..1 across → world x
-  const fy = (f: number) => world.h * (0.5 - f) // 0..1 down → world y
+const SCRIPT_TEXT = `HOOK  00:00
+"Most founders don't have a content problem.
+They have a sixty-minute problem."
 
-  if (narrow) {
-    return {
-      narrow,
-      camRest: { x: fx(0.5), y: fy(0.3) },
-      camStartY: fy(-0.35),
-      camScale: world.w * 0.3,
-      // Scene 2's video sits centred, lower in the (separate, normal-flow) block.
-      camExit: { x: fx(0.5), y: fy(0.55) },
-    }
-  }
+BEAT 1  00:06
+Everyone tells you to post daily. Nobody tells
+you where thirty videos a month come from.
 
-  return {
-    narrow,
-    // Camera lives in the left gutter, scene-1 media occupies 40%→98%.
-    camRest: { x: fx(0.24), y: fy(0.58) },
-    camStartY: fy(-0.35),
-    camScale: world.w * 0.135,
-    // Scene 2's video is centred — camera travels down and in behind it.
-    camExit: { x: fx(0.5), y: fy(0.55) },
-  }
-}
+BEAT 2  00:19
+So we stopped asking for thirty days.
+We ask for one hour.
+
+BEAT 3  00:28
+One session. Every angle, every take.
+Then we cut it into a month.
+
+CTA  00:41
+"You've already got the hour.
+We'll handle the other twenty-nine days."`
 
 export default function RecordingStudio() {
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const pinnedSectionRef = useRef<HTMLElement>(null)
-  const scene2Ref = useRef<HTMLDivElement>(null)
+  const pinRef = useRef<HTMLDivElement>(null)
 
-  const s1TextRef = useRef<HTMLDivElement>(null)
-  const s2TextRef = useRef<HTMLDivElement>(null)
-  const video1Ref = useRef<HTMLDivElement>(null)
-  const video1FrameRef = useRef<HTMLDivElement>(null)
-  const video2FrameRef = useRef<HTMLDivElement>(null)
+  const eyebrowRef = useRef<HTMLSpanElement>(null)
+  const headingLine1Ref = useRef<HTMLSpanElement>(null)
+  const headingLine2Ref = useRef<HTMLSpanElement>(null)
+  const bodyRef = useRef<HTMLParagraphElement>(null)
 
-  const cameraRef = useRef<THREE.Group>(null)
-  const mouseInfluence = useRef<MouseInfluence>({ value: 0 })
+  const cameraImgRef = useRef<HTMLDivElement>(null)
+  const leftVideoRef = useRef<HTMLDivElement>(null)
 
-  // R3F mounts Canvas children on its own reconciler schedule, so the group
-  // ref is still null when the outer effect first runs. Wait for the object
-  // to report ready, plus the world measurement, before building the timeline.
-  const [ready, setReady] = useState(false)
-  const [world, setWorld] = useState<WorldSize | null>(null)
-  // The canvas is `position: fixed` so the camera can travel past the pin
-  // seam into scene 2. Once we've fully scrolled past this component it must
-  // stop covering the viewport, or it sits (invisible but rendering) over
-  // every section below it for the rest of the page.
-  const [canvasLive, setCanvasLive] = useState(true)
-
-  const handleReady = useCallback(() => setReady(true), [])
-  const handleResize = useCallback((s: WorldSize) => {
-    setWorld((prev) => (prev && prev.w === s.w && prev.h === s.h ? prev : s))
-  }, [])
+  const rightVideoRef = useRef<HTMLDivElement>(null)
+  const paperRef = useRef<HTMLDivElement>(null)
+  const scriptTextRef = useRef<HTMLPreElement>(null)
 
   useGSAP(
     () => {
-      if (!ready || !world) return
-      const cam = cameraRef.current
-      if (!cam || !wrapperRef.current) return
+      // Scene 1 is the resting state: the section is pinned and centred, so
+      // it is already fully in view on arrival. Only the outgoing layers of
+      // the swap start hidden — a scroll-triggered entrance here would race
+      // the pin, whose trigger sits at the same scroll position.
+      gsap.set([cameraImgRef.current, rightVideoRef.current], { autoAlpha: 1, scale: 1 })
+      gsap.set(leftVideoRef.current, { autoAlpha: 0, scale: 0.9 })
+      gsap.set(paperRef.current, { autoAlpha: 0, scale: 0.9 })
 
-      const L = getLayout(world)
+      // ── Pin: once the stage is fully in view, further scroll drives the
+      // swap — left: camera → video, right: video → script paper — instead
+      // of moving the page. Headings/copy swap alongside it. ─────────────
+      // Read the copy from the constant, never from the DOM — the effect
+      // can run twice (StrictMode), and the first pass blanks the node.
+      const script = scriptTextRef.current
+      const fullText = SCRIPT_TEXT
+      if (script) script.textContent = ''
+      const typer = { chars: 0 }
 
-      // ── Initial state ──────────────────────────────────────
-      gsap.set(cam.position, { x: L.camRest.x, y: L.camStartY, z: 0 })
-      gsap.set(cam.rotation, { x: 0, y: 0, z: 0 })
-      gsap.set(cam.scale, { x: 0.0001, y: 0.0001, z: 0.0001 })
-      mouseInfluence.current.value = 0
+      // Two copy states. Scrubbing runs both ways, so the swap has to be
+      // written as a reversible set — not a one-shot .call().
+      const COPY = {
+        session: {
+          eyebrow: 'Inside the session',
+          line1: 'One session.',
+          line2: 'A month of content.',
+          body:
+            'Sixty minutes in front of the lens is the only time we ask for. Every angle, every take, every asset — captured once, then cut into a full month of content.',
+        },
+        script: {
+          eyebrow: 'Before the camera rolls',
+          line1: 'Every word,',
+          line2: 'planned first.',
+          body:
+            'Nothing gets said on camera that wasn’t written first. Every hook, beat, and CTA is scripted before the lens ever turns on.',
+        },
+      }
+      const applyCopy = (c: (typeof COPY)['session']) => {
+        if (eyebrowRef.current) eyebrowRef.current.textContent = c.eyebrow
+        if (headingLine1Ref.current) headingLine1Ref.current.textContent = c.line1
+        if (headingLine2Ref.current) headingLine2Ref.current.textContent = c.line2
+        if (bodyRef.current) bodyRef.current.textContent = c.body
+      }
 
-      gsap.set(s1TextRef.current, { opacity: 0, y: 34 })
-      gsap.set(video1Ref.current, { opacity: 0, scale: 0.82 })
-      gsap.set(video1FrameRef.current, { rotateY: 0, rotateX: 0 })
-      gsap.set(s2TextRef.current, { opacity: 0, y: 28 })
-      gsap.set(video2FrameRef.current, { opacity: 0, scale: 0.86 })
-
-      const tl = gsap.timeline({
+      const swapTl = gsap.timeline({
         scrollTrigger: {
-          trigger: wrapperRef.current,
+          trigger: pinRef.current,
           start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1,
-          invalidateOnRefresh: true,
+          end: '+=125%',
+          scrub: 0.6,
+          pin: true,
+          anticipatePin: 1,
         },
       })
 
-      /* ── PHASE 1 — text + video land, camera descends from above ── */
-      tl.to(
-        s1TextRef.current,
-        { opacity: 1, y: 0, duration: 1.2, ease: 'power2.out' },
-        0
-      )
+      swapTl
+        // copy swaps out, then back in with new wording
+        .to([headingLine1Ref.current, headingLine2Ref.current, bodyRef.current], {
+          opacity: 0,
+          y: -16,
+          duration: 0.35,
+        }, 0)
+        // Swap the words at the midpoint of the fade, in whichever
+        // direction the scrub is travelling.
+        .add(() => {
+          applyCopy(swapTl.scrollTrigger?.direction === -1 ? COPY.session : COPY.script)
+        }, 0.35)
+        .to([headingLine1Ref.current, headingLine2Ref.current, bodyRef.current], {
+          opacity: 1,
+          y: 0,
+          duration: 0.4,
+        }, 0.4)
+
+        // left slot: camera → video
+        .to(cameraImgRef.current, { autoAlpha: 0, scale: 0.9, duration: 0.5 }, 0.15)
+        .to(leftVideoRef.current, { autoAlpha: 1, scale: 1, duration: 0.6 }, 0.35)
+
+        // right slot: video → script paper
+        .to(rightVideoRef.current, { autoAlpha: 0, scale: 0.9, duration: 0.5 }, 0.15)
+        .to(paperRef.current, { autoAlpha: 1, scale: 1, duration: 0.6 }, 0.45)
+
+        // Script types itself out. Tween a proxy value rather than the
+        // element — a tween with no animatable properties has nothing to
+        // interpolate, so its onUpdate never runs.
         .to(
-          video1Ref.current,
-          { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.out' },
-          0.2
+          typer,
+          {
+            chars: fullText.length,
+            duration: 1.6,
+            ease: 'none',
+            onUpdate: () => {
+              if (script) script.textContent = fullText.slice(0, Math.round(typer.chars))
+            },
+          },
+          0.7
         )
-        // Camera falls in from off the top, growing as it arrives.
-        .to(cam.position, { y: L.camRest.y, duration: 2, ease: 'power2.out' }, 0.8)
-        .to(
-          cam.scale,
-          { x: L.camScale, y: L.camScale, z: L.camScale, duration: 2, ease: 'back.out(1.2)' },
-          0.8
-        )
-        // Turns linearly from 0 straight to facing right as it falls — one
-        // continuous rotation, so it never swings through facing-left first.
-        .to(cam.rotation, { y: Math.PI / 2, duration: 2.9, ease: 'power2.out' }, 0.8)
-        .to(cam.rotation, { x: 0.05, duration: 0.9, ease: 'power2.inOut' }, 2.6)
-        .to(
-          video1FrameRef.current,
-          { rotateY: -9, rotateX: 2, duration: 0.9, ease: 'power2.inOut' },
-          2.6
-        )
-
-      /* ── PHASE 2 — recording hold: camera holds its scroll position, only
-         the cursor moves it (see the pointer-drift group in CameraModel) ── */
-      const phase2Start = 3.5
-      const phase2Span = 0.6
-      tl.to(mouseInfluence.current, { value: 1, duration: 0.4, ease: 'power1.out' }, phase2Start)
-        .to(
-          mouseInfluence.current,
-          { value: 0, duration: 0.4, ease: 'power1.in' },
-          phase2Start + phase2Span
-        )
-
-      /* ── PHASE 3 — camera continues down, past the pin, and disappears
-         behind the video in the next (normal-flow) section ── */
-      const p3 = phase2Start + phase2Span + 0.4
-
-      tl.to(video2FrameRef.current, { opacity: 1, scale: 1, duration: 1.4, ease: 'power2.out' }, p3)
-
-      tl.to(
-        cam.position,
-        { x: L.camExit.x, y: L.camExit.y, duration: 2.2, ease: 'power2.inOut' },
-        p3 + 0.2
-      )
-        .to(
-          cam.rotation,
-          { y: '+=' + Math.PI * 1.1, x: 0.15, duration: 2.2, ease: 'power1.inOut' },
-          p3 + 0.2
-        )
-        // Shrinks away as it tucks behind the video — the canvas sits below
-        // the DOM media in z-order, so it is genuinely occluded.
-        .to(
-          cam.scale,
-          { x: 0.0001, y: 0.0001, z: 0.0001, duration: 1.8, ease: 'power2.in' },
-          p3 + 0.6
-        )
-
-      // Once the camera has fully shrunk away, release the fixed canvas so it
-      // stops covering (and rendering behind) whatever section comes next.
-      ScrollTrigger.create({
-        trigger: wrapperRef.current,
-        start: 'bottom bottom',
-        onEnter: () => setCanvasLive(false),
-        onLeaveBack: () => setCanvasLive(true),
-      })
-
-      // Scene 2's heading is a plain one-shot reveal as it scrolls into
-      // view — it lives in normal document flow, outside the scrubbed pin.
-      gsap.to(s2TextRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 1,
-        ease: 'power2.out',
-        scrollTrigger: {
-          trigger: scene2Ref.current,
-          start: 'top 75%',
-          once: true,
-        },
-      })
-
-      ScrollTrigger.refresh()
     },
-    { scope: wrapperRef, dependencies: [ready, world] }
+    { scope: wrapperRef }
   )
 
   return (
     <div ref={wrapperRef} style={{ position: 'relative', background: 'var(--hero-bg)' }}>
-      {/* One canvas, fixed to the viewport, spans the whole wrapper's scroll
-          range so the camera can travel from the pinned scene into the
-          normal-flow scene below without being clipped at the seam. Hidden
-          (not unmounted, to keep useGLTF's cache warm) once we've scrolled
-          past this component entirely. */}
-      <div
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 1,
-          pointerEvents: 'none',
-          visibility: canvasLive ? 'visible' : 'hidden',
-        }}
-      >
-        <CameraScene
-          cameraRef={cameraRef}
-          mouseInfluence={mouseInfluence}
-          onReady={handleReady}
-          onResize={handleResize}
-        />
-      </div>
-
-      {/* ── Scene 1 — pinned ─────────────────────────────────── */}
-      <section ref={pinnedSectionRef} style={{ position: 'relative', height: '420vh' }}>
-        <div
+      {/* ── Scene 1 — pinned while camera/video swap to video/script ── */}
+      <div ref={pinRef} style={{ position: 'relative' }}>
+        <section
+          className="rs-stage"
           style={{
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
+            position: 'relative',
             width: '100%',
-            overflow: 'hidden',
+            maxWidth: '1680px',
+            margin: '0 auto',
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: 'clamp(48px, 7vw, 96px) var(--pad)',
           }}
         >
-          <div
-            className="rs-stage"
-            style={{
-              position: 'relative',
-              height: '100%',
-              width: '100%',
-              maxWidth: '1400px',
-              margin: '0 auto',
-              padding: '0 var(--pad)',
-            }}
-          >
-            {/* video (scene 1, right) — sits above the fixed canvas in z */}
-            <div ref={video1Ref} className="rs-media rs-media-1" style={{ opacity: 0 }}>
-              <div ref={video1FrameRef} className="rs-frame">
-                <video autoPlay loop muted playsInline className="rs-video">
-                  <source src="/heroVideo.mp4" type="video/mp4" />
-                </video>
+          <div className="rs-copy">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '14px' }}>
+              <span style={{ width: '24px', height: '1px', background: 'var(--hero-gold)', opacity: 0.55 }} />
+              <span
+                ref={eyebrowRef}
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 500,
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'var(--t2)',
+                }}
+              >
+                Inside the session
+              </span>
+            </div>
+            <h2
+              style={{
+                fontFamily: 'var(--font-anton), sans-serif',
+                fontWeight: 400,
+                fontSize: 'clamp(28px, 5vw, 64px)',
+                lineHeight: 1.04,
+                letterSpacing: '0.005em',
+                textTransform: 'uppercase',
+                color: 'var(--hero-cream)',
+                margin: 0,
+              }}
+            >
+              <span ref={headingLine1Ref} style={{ display: 'block' }}>
+                One session.
+              </span>
+              <span ref={headingLine2Ref} style={{ display: 'block', color: 'var(--hero-gold)' }}>
+                A month of content.
+              </span>
+            </h2>
+            <p
+              ref={bodyRef}
+              style={{
+                margin: 'clamp(12px, 1.6vw, 18px) auto 0',
+                maxWidth: '560px',
+                fontSize: 'clamp(12px, 1.3vw, 15px)',
+                fontWeight: 300,
+                lineHeight: 1.65,
+                color: 'var(--t3)',
+              }}
+            >
+              Sixty minutes in front of the lens is the only time we ask for. Every
+              angle, every take, every asset — captured once, then cut into a full
+              month of content.
+            </p>
+          </div>
+
+          <div className="rs-row">
+            {/* Left slot — camera.png swaps to a video */}
+            <div className="rs-slot rs-slot-left">
+              <div ref={cameraImgRef} className="rs-camera-img">
+                <Image src="/camera.png" alt="" width={720} height={720} priority />
+              </div>
+
+              <div ref={leftVideoRef} className="rs-media" style={{ opacity: 0 }}>
+                <div className="rs-frame">
+                  <video autoPlay loop muted playsInline className="rs-video">
+                    <source src="/heroVideo.mp4" type="video/mp4" />
+                  </video>
+                </div>
               </div>
             </div>
 
-            <div ref={s1TextRef} className="rs-copy" style={{ opacity: 0 }}>
-              <Eyebrow>Inside the session</Eyebrow>
-              <Heading>
-                One session.
-                <span style={{ display: 'block', color: 'var(--hero-gold)' }}>
-                  A month of content.
-                </span>
-              </Heading>
-              <Body>
-                Sixty minutes in front of the lens is the only time we ask for. Every
-                angle, every take, every asset — captured once, then cut into a full
-                month of content.
-              </Body>
+            {/* Right slot — video swaps to the script paper */}
+            <div className="rs-slot rs-slot-right">
+              <div ref={rightVideoRef} className="rs-media">
+                <div className="rs-frame">
+                  <video autoPlay loop muted playsInline className="rs-video">
+                    <source src="/heroVideo.mp4" type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+
+              <div ref={paperRef} className="rs-paper" style={{ opacity: 0, visibility: 'hidden' }}>
+                <span className="rs-paper-eyebrow">Script</span>
+                <h3 className="rs-paper-heading">Scripted.</h3>
+                <pre ref={scriptTextRef} className="rs-paper-script">
+                  {SCRIPT_TEXT}
+                </pre>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── Scene 2 — normal document flow, stacked beneath scene 1 ──────
-          Just a video the camera ends up behind. Nothing here is pinned. */}
-      <div
-        ref={scene2Ref}
-        style={{
-          position: 'relative',
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'clamp(28px, 4vw, 48px)',
-          padding: 'clamp(48px, 8vw, 96px) var(--pad)',
-        }}
-      >
-        <div ref={s2TextRef} style={{ textAlign: 'center', maxWidth: '640px', opacity: 0 }}>
-          <Eyebrow>After the camera stops</Eyebrow>
-          <Heading>
-            Then we write
-            <span style={{ display: 'block', color: 'var(--hero-gold)' }}>
-              the rest.
-            </span>
-          </Heading>
-          <Body>
-            Scripts, hooks, captions, and the edit plan. The moment recording ends,
-            that footage becomes a publishing calendar that keeps working long
-            after you have left the room.
-          </Body>
-        </div>
-
-        <div
-          ref={video2FrameRef}
-          className="rs-frame"
-          style={{
-            position: 'relative',
-            zIndex: 2,
-            width: '100%',
-            maxWidth: '900px',
-            opacity: 0,
-          }}
-        >
-          <video autoPlay loop muted playsInline className="rs-video">
-            <source src="/heroVideo.mp4" type="video/mp4" />
-          </video>
-        </div>
+        </section>
       </div>
 
       <style>{`
         .rs-copy {
-          position: absolute;
-          top: 7%;
-          left: var(--pad);
-          right: var(--pad);
+          position: relative;
           z-index: 2;
           text-align: center;
-          pointer-events: none;
+          margin: 0 auto clamp(32px, 5vw, 56px);
+          max-width: 720px;
+        }
+        .rs-row {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: clamp(24px, 4vw, 56px);
+        }
+        .rs-slot {
+          position: relative;
+          flex: 1 1 auto;
+          min-width: 0;
+          max-width: 760px;
+          aspect-ratio: 16 / 9;
+        }
+        .rs-camera-img {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        /* Fill the slot box rather than sitting letterboxed inside it —
+           the PNG is square, the slot is 16/9, so height is the limit. */
+        .rs-camera-img img {
+          width: auto !important;
+          height: 118% !important;
+          max-width: none;
+          object-fit: contain;
         }
         .rs-media {
           position: absolute;
-          z-index: 2;
+          inset: 0;
           perspective: 1400px;
-          top: 58%;
-          transform: translateY(-50%);
         }
-        .rs-media-1 { left: 40%; width: 58%; }
         .rs-frame {
           position: relative;
           width: 100%;
@@ -348,68 +312,51 @@ export default function RecordingStudio() {
           height: 100%;
           object-fit: cover;
         }
+        .rs-paper {
+          position: absolute;
+          inset: 0;
+          background: var(--hero-cream, #f4f1d6);
+          border-radius: 10px;
+          padding: clamp(20px, 1.9vw, 30px) clamp(26px, 2.4vw, 40px);
+          aspect-ratio: 16 / 9;
+          box-shadow: 0 0 0 1px rgba(0,0,0,0.06), 0 30px 80px rgba(0,0,0,0.45);
+          display: flex;
+          flex-direction: column;
+        }
+        .rs-paper-eyebrow {
+          font-size: clamp(10px, 0.85vw, 12px);
+          font-weight: 600;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: rgba(20,20,20,0.45);
+        }
+        .rs-paper-heading {
+          font-family: var(--font-anton), sans-serif;
+          font-weight: 400;
+          font-size: clamp(20px, 1.9vw, 30px);
+          line-height: 1.1;
+          text-transform: uppercase;
+          color: #16160f;
+          margin: 4px 0 12px;
+        }
+        .rs-paper-script {
+          flex: 1 1 auto;
+          margin: 0;
+          overflow: hidden;
+          white-space: pre-wrap;
+          font-family: var(--font-mono, monospace);
+          /* Sized so the full 17-line script clears the panel's inner
+             height at every width — it is clipped, not scrolled. */
+          font-size: clamp(8.5px, 0.66vw, 11px);
+          line-height: 1.45;
+          color: rgba(20,20,20,0.8);
+        }
 
         @media (max-aspect-ratio: 105/100) {
-          .rs-copy { top: 4%; }
-          .rs-media { top: 68%; }
-          .rs-media-1 { left: 6%; width: 88%; }
+          .rs-row { flex-direction: column; }
+          .rs-slot { max-width: 100%; width: 100%; aspect-ratio: 16 / 9; }
         }
       `}</style>
     </div>
-  )
-}
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '14px' }}>
-      <span style={{ width: '24px', height: '1px', background: 'var(--hero-gold)', opacity: 0.55 }} />
-      <span
-        style={{
-          fontSize: '10px',
-          fontWeight: 500,
-          letterSpacing: '0.14em',
-          textTransform: 'uppercase',
-          color: 'var(--t2)',
-        }}
-      >
-        {children}
-      </span>
-    </div>
-  )
-}
-
-function Heading({ children }: { children: React.ReactNode }) {
-  return (
-    <h2
-      style={{
-        fontFamily: 'var(--font-anton), sans-serif',
-        fontWeight: 400,
-        fontSize: 'clamp(28px, 5vw, 64px)',
-        lineHeight: 1.04,
-        letterSpacing: '0.005em',
-        textTransform: 'uppercase',
-        color: 'var(--hero-cream)',
-        margin: 0,
-      }}
-    >
-      {children}
-    </h2>
-  )
-}
-
-function Body({ children }: { children: React.ReactNode }) {
-  return (
-    <p
-      style={{
-        margin: 'clamp(12px, 1.6vw, 18px) auto 0',
-        maxWidth: '560px',
-        fontSize: 'clamp(12px, 1.3vw, 15px)',
-        fontWeight: 300,
-        lineHeight: 1.65,
-        color: 'var(--t3)',
-      }}
-    >
-      {children}
-    </p>
   )
 }

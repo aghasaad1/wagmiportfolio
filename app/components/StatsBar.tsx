@@ -64,7 +64,7 @@ export default function StatsBar() {
       ref={wrapRef}
       style={{
         background: 'var(--hero-bg)',
-        padding: '0 var(--pad) clamp(56px, 8vw, 110px)',
+        padding: '0 var(--pad) clamp(40px, 5.5vw, 76px)',
       }}
     >
       <div style={{ maxWidth: 'var(--max)', margin: '0 auto' }}>

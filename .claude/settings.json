@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(awk '{ if \\(length\\($0\\) > 500\\) print NR\": len \"length\\($0\\)\" \"substr\\($0,1,150\\) }' chatgpt/index.html)",
+      "Bash(grep -rn \"from '\\\\.\\\\./\\\\|from \\\\\"\\\\.\\\\./\\\\|from '\\\\./components\\\\|from '@/\" app --include=*.tsx)",
+      "Bash(mkdir -p public/hq app/_hq/fonts app/_hq/components app/_legacy)",
+      "Bash(cp /c/Users/PC/AppData/Local/Temp/claude/c--Users-PC-Desktop-Hammad-wagmiportfolio/63d965b9-333e-4563-9de1-7774a1e7f1ec/scratchpad/mark.svg public/hq/wagmi-mark.svg)",
+      "Bash(cp chatgpt/assets/*.ttf app/_hq/fonts/)",
+      "Bash(cp app/page.tsx app/_legacy/LegacyHomePage.tsx)",
+      "Bash(cp app/layout.tsx app/_legacy/LegacyRootLayout.tsx)",
+      "Bash(sed -i \"s#from './components/#from '../components/#g; s#export default function Page\\(\\)#export default function LegacyHomePage\\(\\)#\" app/_legacy/LegacyHomePage.tsx)",
+      "Bash(sed -i \"s#from './components/#from '../components/#g; s#^import './globals.css'#import '../globals.css'#; s#export default function RootLayout\\(#export default function LegacyRootLayout\\(#\" app/_legacy/LegacyRootLayout.tsx)",
+      "Bash(ls \"/c/Program Files/Google/Chrome/Application/chrome.exe\" \"/c/Program Files \\(x86\\)/Microsoft/Edge/Application/msedge.exe\" 2>&1)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Bash(curl -s -o /dev/null localhost:3099)",
+      "Bash(break)",
+      "Bash(curl -s -o /dev/null -w \"careers -> %{http_code} %{redirect_url}\\\\n\" localhost:3099/careers)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --window-size=1440,6200 '--screenshot=C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-PC-Desktop-Hammad-wagmiportfolio\\\\63d965b9-333e-4563-9de1-7774a1e7f1ec\\\\scratchpad\\\\new.png' http://localhost:3099/)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --window-size=1440,6200 '--screenshot=C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-PC-Desktop-Hammad-wagmiportfolio\\\\63d965b9-333e-4563-9de1-7774a1e7f1ec\\\\scratchpad\\\\old.png' file:///C:/Users/PC/Desktop/Hammad/wagmiportfolio/chatgpt/index.html)",
+      "Read(//c/Users/PC/AppData/Local/Temp/claude/c--Users-PC-Desktop-Hammad-wagmiportfolio/63d965b9-333e-4563-9de1-7774a1e7f1ec/scratchpad//**)",
+      "Bash(python -c ' *)",
+      "Bash(sed -i 's/className={btn}/className={btn\\(\\)}/; s/\\\\${btn} col-span-full/${btn\\(\\)} col-span-full/' Hero.tsx Contact.tsx)",
+      "Bash(sed -i 's/className={btnGhost}/className={btnGhost\\(\\)}/; s/\\\\${btnGhost} shrink-0/${btnGhost\\(\\)} shrink-0/' HowWeWork.tsx)",
+      "Read(//c/Users/PC/**)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3099 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -Confirm:$false }; \"stopped\")",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --window-size=390,9000 '--screenshot=C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-PC-Desktop-Hammad-wagmiportfolio\\\\63d965b9-333e-4563-9de1-7774a1e7f1ec\\\\scratchpad\\\\newm.png' http://localhost:3099/)",
+      "Bash(grep -oh 'text-\\\\\\\\\\\\[16px\\\\\\\\\\\\][^}]*}' .next/static/chunks/*.css)",
+      "Bash('/c/Program Files/Google/Chrome/Application/chrome.exe' --headless=new --disable-gpu --hide-scrollbars --virtual-time-budget=5000 --window-size=1440,900 '--screenshot=C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\c--Users-PC-Desktop-Hammad-wagmiportfolio\\\\63d965b9-333e-4563-9de1-7774a1e7f1ec\\\\scratchpad\\\\legacy.png' http://localhost:3099/)",
+      "Bash(powershell -Command 'Get-NetTCPConnection -LocalPort 3099 -State Listen -EA SilentlyContinue | % { Stop-Process -Id $_.OwningProcess -Force }')",
+      "Bash(sed -i \"s/= 'legacy'$/= 'hq'/\" design.config.ts)",
+      "Bash(sed -E 's/base64,[A-Za-z0-9+\\\\/=]*/base64,.../g' public/hq/wagmi-mark.svg)",
+      "Bash(python -c \"import PIL; print\\(PIL.__version__\\)\")",
+      "Bash(git mv *)",
+      "Read(//c/Users/PC/AppData/Local/Temp/claude/c--Users-PC-Desktop-Hammad-wagmiportfolio/63d965b9-333e-4563-9de1-7774a1e7f1ec/scratchpad/**)",
+      "Bash(ffmpeg -v error -y -ss 6 -i public/heroVideo.mp4 -frames:v 1 -vf scale=1280:-1 -q:v 3 public/hq/vsl-poster.jpg)"
+    ]
+  }
+}

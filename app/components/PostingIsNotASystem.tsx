@@ -82,7 +82,7 @@ export default function PostingIsNotASystem() {
       ref={sectionRef}
       style={{
         background: 'var(--section-bg)',
-        padding: 'clamp(56px, 8vw, 110px) var(--pad) clamp(72px, 10vw, 140px)',
+        padding: 'clamp(40px, 5.5vw, 76px) var(--pad) clamp(48px, 6.5vw, 96px)',
       }}
     >
       <div style={{ maxWidth: 'var(--max)', margin: '0 auto' }}>

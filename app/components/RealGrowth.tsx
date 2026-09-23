@@ -83,7 +83,7 @@ export default function RealGrowth() {
     <section
       style={{
         background: 'var(--hero-bg)',
-        padding: 'clamp(56px, 8vw, 110px) var(--pad) clamp(72px, 10vw, 140px)',
+        padding: 'clamp(40px, 5.5vw, 76px) var(--pad) clamp(48px, 6.5vw, 96px)',
         overflow: 'hidden',
       }}
     >

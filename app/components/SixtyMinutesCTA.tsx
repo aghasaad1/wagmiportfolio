@@ -36,7 +36,7 @@ export default function SixtyMinutesCTA() {
       ref={sectionRef}
       style={{
         background: 'var(--green2)',
-        padding: 'clamp(72px, 11vw, 150px) var(--pad)',
+        padding: 'clamp(50px, 7.5vw, 104px) var(--pad)',
         textAlign: 'center',
       }}
     >

@@ -240,7 +240,7 @@ export default function CareersContent() {
       <div ref={revealRef}>
 
         {/* ── Open Roles ───────────────────────────────────── */}
-        <section ref={openRolesRef} id="open-roles" style={{ padding: 'clamp(80px, 10vw, 120px) var(--pad)', background: 'var(--section-bg)', borderBottom: '1px solid var(--line2)' }}>
+        <section ref={openRolesRef} id="open-roles" style={{ padding: 'clamp(56px, 7vw, 84px) var(--pad)', background: 'var(--section-bg)', borderBottom: '1px solid var(--line2)' }}>
           <div style={{ maxWidth: 'var(--max)', margin: '0 auto' }}>
             <div className="reveal" style={{ fontSize: '10px', fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--t2)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ width: '16px', height: '1px', background: 'var(--green)', display: 'inline-block' }} />
@@ -277,7 +277,7 @@ export default function CareersContent() {
 
         {/* ── Open Application ─────────────────────────────── */}
         <section style={{
-          padding: 'clamp(80px, 12vw, 140px) var(--pad)',
+          padding: 'clamp(56px, 8vw, 96px) var(--pad)',
           background: 'var(--hero-bg)',
           borderBottom: '1px solid var(--line2)',
           position: 'relative', overflow: 'hidden',
