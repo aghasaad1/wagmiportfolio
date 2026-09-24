@@ -32,9 +32,14 @@ export default function Vsl() {
           >
             <Image src={POSTER_SRC} alt="" fill sizes="(max-width: 880px) 100vw, 880px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" priority />
             <span className="absolute inset-0 bg-[#0c1814]/20 transition-colors group-hover:bg-[#0c1814]/5" />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_4px_18px_#0c1814] transition-transform duration-300 group-hover:scale-110">
-              <span data-float className="block">
-                <Mark className="block h-24 w-24 max-[800px]:h-14 max-[800px]:w-14" />
+            {/* Liquid Glass disc with the WAGMI mark as the play button */}
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-110">
+              <span
+                data-float
+                style={{ '--glass-dark': 0.12, '--glow': 1, '--gx': 34, '--gy': 18 } as React.CSSProperties}
+                className="hq-glass relative grid h-[118px] w-[118px] place-items-center rounded-full max-[800px]:h-[76px] max-[800px]:w-[76px]"
+              >
+                <Mark className="ml-1 block h-14 w-14 drop-shadow-[0_2px_8px_#0c181499] max-[800px]:h-9 max-[800px]:w-9" />
               </span>
             </span>
           </button>

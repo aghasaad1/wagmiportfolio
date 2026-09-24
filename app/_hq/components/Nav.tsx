@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Mark, btn } from './ui'
 import { useOpenCareers } from './Careers'
+import { useGlassHighlight } from './Glass'
 
 const LINKS = [
   { href: '#work', label: 'Work' },
@@ -13,6 +14,7 @@ const LINKS = [
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const openCareers = useOpenCareers()
+  const glassRef = useGlassHighlight<HTMLElement>()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false)
@@ -21,7 +23,12 @@ export default function Nav() {
   }, [])
 
   return (
-    <header data-anim="nav" className="sticky top-4 z-10 mx-auto mt-4 flex min-h-[60px] w-fit max-w-[calc(100%-24px)] items-center justify-start gap-[26px] rounded-[17px] border border-[#f4f1d61b] bg-[#17251ee8] px-[14px] py-[9px] backdrop-blur-[18px] max-[800px]:top-3 max-[800px]:mt-3 max-[800px]:min-h-[56px] max-[800px]:gap-3 max-[800px]:px-3 max-[800px]:py-2 max-[370px]:gap-[11px] max-[370px]:px-[10px]">
+    <header
+      ref={glassRef}
+      data-anim="nav"
+      // Darker glass tint than the default so nav text stays legible over light content scrolling beneath
+      style={{ '--glass-dark': 0.55 } as React.CSSProperties}
+      className="hq-glass sticky top-4 z-10 mx-auto mt-4 flex min-h-[60px] w-fit max-w-[calc(100%-24px)] items-center justify-start gap-[26px] rounded-[17px] px-[14px] py-[9px] max-[800px]:top-3 max-[800px]:mt-3 max-[800px]:min-h-[56px] max-[800px]:gap-3 max-[800px]:px-3 max-[800px]:py-2 max-[370px]:gap-[11px] max-[370px]:px-[10px]">
       <a
         href="#top"
         aria-label="WAGMI HQ LLC home"
@@ -60,7 +67,10 @@ export default function Nav() {
         </summary>
         <nav
           aria-label="Mobile navigation"
-          className="absolute right-0 top-[calc(100%+10px)] flex w-[225px] flex-col rounded-[15px] border border-[#f4f1d629] bg-[#15271ff7] p-[10px] shadow-[0_14px_35px_#0005] backdrop-blur-[18px]"
+          // Glass to match the nav; tinted near-opaque because a backdrop blur nested inside the
+          // nav's own backdrop-filter can't sample the page behind it
+          style={{ '--glass-dark': 0.94 } as React.CSSProperties}
+          className="hq-glass absolute right-0 top-[calc(100%+10px)] flex w-[225px] flex-col rounded-[16px] p-[10px]"
         >
           {LINKS.map((l) => (
             <a

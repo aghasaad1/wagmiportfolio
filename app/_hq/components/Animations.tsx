@@ -20,6 +20,7 @@ const shown = { autoAlpha: 1, y: 0, ease: EASE, clearProps: 'transform' }
  *   data-float         gentle idle pulse
  *   data-scrub         statement lit word by word with scroll
  *   data-timeline      process timeline (fill + nodes lit with scroll)
+ *   data-blob          ambient light behind the glass package cards (slow drift)
  * hq.css hides the animated elements until GSAP reveals them.
  */
 export default function Animations() {
@@ -100,6 +101,31 @@ export default function Animations() {
           if (seg) tl.fromTo(seg, { scaleY: 0 }, { scaleY: 1, duration: step, ease: 'none' }, i * step)
         })
         if (!phone) tl.fromTo(el.querySelector('[data-timeline-fill]'), { scaleX: 0 }, { scaleX: 1, duration: 1, ease: 'none' }, 0)
+      })
+    })
+
+    // Ambient light behind the glass package cards drifts slowly (desktop only; still on phones),
+    // and only runs while the section is on screen.
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 801px)', () => {
+      const blobs = gsap.utils.toArray<HTMLElement>('[data-blob]')
+      if (!blobs.length) return
+      const tweens = blobs.map((b, i) =>
+        gsap.to(b, {
+          xPercent: gsap.utils.random(-30, 30),
+          yPercent: gsap.utils.random(-25, 25),
+          scale: gsap.utils.random(0.85, 1.2),
+          duration: gsap.utils.random(9, 14),
+          delay: -i * 3,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+        }),
+      )
+      ScrollTrigger.create({
+        trigger: blobs[0].parentElement,
+        start: 'top bottom',
+        end: 'bottom top',
+        onToggle: (self) => tweens.forEach((t) => (self.isActive ? t.play() : t.pause())),
       })
     })
   })

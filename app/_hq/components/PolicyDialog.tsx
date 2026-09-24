@@ -50,7 +50,9 @@ export default function PolicyDialog({
       aria-labelledby="policy-title"
       onClose={() => lockPageScroll(false)}
       onClick={(e) => e.target === e.currentTarget && close()}
-      className="m-auto h-[min(86dvh,860px)] w-[min(820px,calc(100%-32px))] overflow-hidden rounded-[22px] border border-[#f4f1d629] bg-[#0f1d17] p-0 text-[#f4f1d6] shadow-[0_30px_80px_-20px_#000] backdrop:bg-[#0c1814cc] backdrop:backdrop-blur-sm"
+      // Liquid Glass sheet, tinted dark enough for long-form reading
+      style={{ '--glass-dark': 0.88 } as React.CSSProperties}
+      className="hq-glass m-auto h-[min(86dvh,860px)] w-[min(820px,calc(100%-32px))] overflow-hidden rounded-[24px] p-0 text-[#f4f1d6] backdrop:bg-[#0c181499] backdrop:backdrop-blur-[6px]"
     >
       <div className="flex h-full flex-col">
         {/* Header: tabs + close */}

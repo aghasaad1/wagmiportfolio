@@ -10,6 +10,7 @@ import Footer from './components/Footer'
 import { InquiryProvider } from './components/Inquiry'
 import { CareersProvider } from './components/Careers'
 import Animations from './components/Animations'
+import { GlassDefs } from './components/Glass'
 
 // WAGMI HQ LLC single-page site, ported from the /chatgpt HTML prototype.
 export default function HqHomePage() {
@@ -17,6 +18,7 @@ export default function HqHomePage() {
     <InquiryProvider>
       <CareersProvider>
         <Animations />
+        <GlassDefs />
         <Nav />
         <main id="top" className="mx-auto max-w-290 px-8 max-[800px]:px-5">
           <Hero />

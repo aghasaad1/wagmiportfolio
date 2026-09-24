@@ -89,7 +89,8 @@ export default function Footer() {
         <a
           href="#top"
           aria-label="Back to top"
-          className="group grid h-11 w-11 shrink-0 place-items-center rounded-full border border-[#f4f1d633] text-[16px] text-[#f4f1d6] transition-[border-color,background-color] duration-300 hover:border-[#f4f1d6] hover:bg-[#f4f1d6] hover:text-[#0c1814]"
+          style={{ '--gx': 14, '--gy': 6 } as React.CSSProperties}
+          className="hq-glass group relative grid h-12 w-12 shrink-0 place-items-center rounded-full text-[16px] text-[#f4f1d6] transition-transform duration-300 hover:scale-110 hover:[--glow:1]"
         >
           <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[3px]">↑</span>
         </a>

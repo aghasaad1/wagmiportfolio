@@ -1,4 +1,5 @@
 import { InquiryLink, type Topic } from './Inquiry'
+import { GlassArticle } from './Glass'
 import { SectionHead, btn, btnGhost, cardMotion, h3, section } from './ui'
 
 type Pkg = {
@@ -57,19 +58,23 @@ const PACKAGES: Pkg[] = [
 // #17271d → featured #1b3023), plus a top strip that brightens. Full class strings so Tailwind sees them.
 const TIERS = [
   {
-    card: 'border-[#f4f1d621] bg-[#13221a] hover:border-[#f4f1d645]',
+    // Glass tint = the site green for this step; card 1 most tinted, card 3 lets the most light through
+    glass: { '--glass-rgb': '19 34 26', '--glass-dark': 0.74 },
+    card: 'border-[#f4f1d621] hover:border-[#f4f1d645]',
     bar: 'bg-[#f4f1d6]/15',
     tag: 'text-[#9eafa0]',
     button: btnGhost,
   },
   {
-    card: 'border-[#f4f1d636] bg-[#17271d] hover:border-[#f4f1d65c]',
+    glass: { '--glass-rgb': '23 39 29', '--glass-dark': 0.6 },
+    card: 'border-[#f4f1d636] hover:border-[#f4f1d65c]',
     bar: 'bg-[#f4f1d6]/45',
     tag: 'text-[#b0c2aa]',
     button: btnGhost,
   },
   {
-    card: 'border-[#9eb99a75] bg-[#1b3023] hover:border-[#b9d4b4b0]',
+    glass: { '--glass-rgb': '27 48 35', '--glass-dark': 0.46 },
+    card: 'border-[#9eb99a75] hover:border-[#b9d4b4b0]',
     bar: 'bg-[#f4f1d6]',
     tag: 'text-[#c9d6c2]',
     button: btn,
@@ -88,14 +93,21 @@ export default function Packages() {
         sub="Choose paid creative, organic content, or both."
       />
 
-      <div className="grid grid-cols-3 items-stretch gap-4 max-[800px]:grid-cols-1">
+      <div className="relative grid grid-cols-3 items-stretch gap-4 max-[800px]:grid-cols-1">
+        {/* Ambient light for the glass cards to frost; drifts on desktop (Animations: data-blob) */}
+        <div aria-hidden="true" className="pointer-events-none absolute -inset-x-10 -inset-y-6 -z-10 max-[800px]:-inset-x-5">
+          <span data-blob className="absolute left-[4%] top-[18%] h-[340px] w-[340px] rounded-full bg-[#9eb99a] opacity-[.22] blur-[90px] will-change-transform max-[800px]:h-[240px] max-[800px]:w-[240px]" />
+          <span data-blob className="absolute left-[38%] top-[48%] h-[380px] w-[380px] rounded-full bg-[#3f7a50] opacity-[.45] blur-[100px] will-change-transform max-[800px]:h-[260px] max-[800px]:w-[260px]" />
+          <span data-blob className="absolute right-[2%] top-[8%] h-[400px] w-[400px] rounded-full bg-[#f4f1d6] opacity-[.2] blur-[100px] will-change-transform max-[800px]:bottom-[6%] max-[800px]:top-auto max-[800px]:h-[280px] max-[800px]:w-[280px]" />
+        </div>
         {PACKAGES.map((p, i) => {
           const tier = TIERS[i]
           return (
-            <article
+            <GlassArticle
               key={p.name}
               data-anim="reveal"
-              className={`${cardMotion} relative flex flex-col overflow-hidden rounded-[22px] border px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${tier.card}`}
+              style={tier.glass as React.CSSProperties}
+              className={`${cardMotion} hq-glass hq-glass-frost relative flex flex-col overflow-hidden rounded-[22px] border px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${tier.card}`}
             >
               <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-[3px] ${tier.bar}`} />
               <div className={`text-[14px] font-bold uppercase tracking-[.12em] ${tier.tag}`}>{p.tag}</div>
@@ -126,7 +138,7 @@ export default function Packages() {
               >
                 Discuss this package <span>↗</span>
               </InquiryLink>
-            </article>
+            </GlassArticle>
           )
         })}
       </div>

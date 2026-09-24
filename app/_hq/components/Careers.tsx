@@ -53,9 +53,11 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
         aria-labelledby="careers-title"
         onClose={() => lockPageScroll(false)}
         onClick={(e) => e.target === e.currentTarget && close()}
-        className="m-auto max-h-[calc(100dvh-32px)] w-[min(640px,calc(100%-32px))] overflow-y-auto rounded-[22px] border border-[#f4f1d629] bg-[#0f1d17] p-0 text-[#f4f1d6] shadow-[0_30px_80px_-20px_#000] backdrop:bg-[#0c1814cc] backdrop:backdrop-blur-sm"
+        // Liquid Glass sheet, tinted dark enough that the form stays easy to read
+        style={{ '--glass-dark': 0.86 } as React.CSSProperties}
+        className="hq-glass m-auto max-h-[calc(100dvh-32px)] w-[min(640px,calc(100%-32px))] overflow-hidden rounded-[24px] p-0 text-[#f4f1d6] backdrop:bg-[#0c181499] backdrop:backdrop-blur-[6px]"
       >
-        <div className="relative p-9 max-[800px]:p-6">
+        <div className="relative max-h-[calc(100dvh-32px)] overflow-y-auto overscroll-contain p-9 max-[800px]:p-6">
           <button
             type="button"
             onClick={close}
