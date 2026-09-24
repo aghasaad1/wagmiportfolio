@@ -2,16 +2,17 @@
 
 import { useEffect, useState } from 'react'
 import { Mark, btn } from './ui'
+import { useOpenCareers } from './Careers'
 
 const LINKS = [
   { href: '#work', label: 'Work' },
   { href: '#packages', label: 'Packages' },
   { href: '#process', label: 'How it works' },
-  { href: '#careers', label: 'Careers' },
 ]
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const openCareers = useOpenCareers()
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false)
@@ -20,7 +21,7 @@ export default function Nav() {
   }, [])
 
   return (
-    <header className="sticky top-4 z-10 mx-auto mt-4 flex min-h-[60px] w-fit max-w-[calc(100%-24px)] items-center justify-start gap-[26px] rounded-[17px] border border-[#f4f1d61b] bg-[#17251ee8] px-[14px] py-[9px] backdrop-blur-[18px] max-[800px]:top-3 max-[800px]:mt-3 max-[800px]:min-h-[56px] max-[800px]:gap-3 max-[800px]:px-3 max-[800px]:py-2 max-[370px]:gap-[11px] max-[370px]:px-[10px]">
+    <header data-anim="nav" className="sticky top-4 z-10 mx-auto mt-4 flex min-h-[60px] w-fit max-w-[calc(100%-24px)] items-center justify-start gap-[26px] rounded-[17px] border border-[#f4f1d61b] bg-[#17251ee8] px-[14px] py-[9px] backdrop-blur-[18px] max-[800px]:top-3 max-[800px]:mt-3 max-[800px]:min-h-[56px] max-[800px]:gap-3 max-[800px]:px-3 max-[800px]:py-2 max-[370px]:gap-[11px] max-[370px]:px-[10px]">
       <a
         href="#top"
         aria-label="WAGMI HQ LLC home"
@@ -32,8 +33,11 @@ export default function Nav() {
 
       <nav aria-label="Main navigation" className="flex items-center gap-[21px] whitespace-nowrap text-[13px] text-[#b8c1b7] max-[800px]:hidden">
         {LINKS.map((l) => (
-          <a key={l.href} href={l.href}>{l.label}</a>
+          <a key={l.href} href={l.href} className="transition-colors duration-200 hover:text-[#f4f1d6]">{l.label}</a>
         ))}
+        <button type="button" onClick={openCareers} className="cursor-pointer bg-transparent p-0 transition-colors duration-200 hover:text-[#f4f1d6]">
+          Careers
+        </button>
       </nav>
 
       <a
@@ -68,6 +72,16 @@ export default function Nav() {
               {l.label}
             </a>
           ))}
+          <button
+            type="button"
+            onClick={() => {
+              setMenuOpen(false)
+              openCareers()
+            }}
+            className="min-h-[44px] cursor-pointer bg-transparent p-3 text-left text-[14px] hover:rounded-lg hover:bg-[#f4f1d60a]"
+          >
+            Careers
+          </button>
         </nav>
       </details>
     </header>

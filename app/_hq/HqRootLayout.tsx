@@ -26,6 +26,9 @@ export default function HqRootLayout({ children }: { children: React.ReactNode }
   return (
     <html lang="en" className="hq">
       <body className={manrope.className}>
+        <noscript>
+          <style>{'html.hq [data-anim]{visibility:visible!important}'}</style>
+        </noscript>
         {children}
         <Analytics />
         <SpeedInsights />

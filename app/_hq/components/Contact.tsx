@@ -1,34 +1,23 @@
 'use client'
 
-import { useState } from 'react'
 import { TOPICS, useInquiry, type Topic } from './Inquiry'
 import { Eyebrow, btn, h2, section } from './ui'
-
-const EMAIL = 'aghasaad@wagmihq.com'
+import { CONTACT_EMAIL, useSendForm } from './useSendForm'
 
 const field = 'flex flex-col gap-[7px]'
 const label = 'text-[14px] text-[#bdc8b8]'
 const input =
-  'w-full rounded-[10px] border border-[#f4f1d628] bg-[#15241b] p-3 text-[16px] text-[#f4f1d6] outline-none focus:border-[#c1cbb1]'
+  'w-full rounded-[10px] border border-[#f4f1d628] bg-[#15241b] p-3 text-[16px] text-[#f4f1d6] outline-none transition-[border-color,background-color,box-shadow] duration-300 hover:border-[#f4f1d645] focus:border-[#c1cbb1] focus:bg-[#182a1f] focus:shadow-[0_0_0_4px_#c1cbb114]'
 
-// No backend yet: the form opens a pre-filled draft in the visitor's email app.
+// Sends via /api/contact (SMTP), delivered to the inbox set in .env.local
 export default function Contact() {
   const { topic, setTopic } = useInquiry()
-  const [status, setStatus] = useState('')
+  const { state, error, send, reset } = useSendForm('inquiry')
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const f = new FormData(e.currentTarget)
-    const body = [
-      'Name: ' + f.get('name'),
-      'Email: ' + f.get('email'),
-      'Website / portfolio: ' + f.get('business'),
-      'Interest: ' + topic,
-      '',
-      'Message: ' + f.get('challenge'),
-    ].join('\n')
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent('WAGMI HQ LLC — ' + topic)}&body=${encodeURIComponent(body)}`
-    setStatus(`Your email app has been requested. Review and send the draft there. If it does not open, email ${EMAIL} directly.`)
+    await send(e.currentTarget, { topic })
+    setTopic(TOPICS[0])
   }
 
   return (
@@ -36,7 +25,7 @@ export default function Contact() {
       id="inquiry"
       className={`${section} grid grid-cols-[1fr_1.1fr] gap-[90px] border-b-0 max-[800px]:grid-cols-1 max-[800px]:gap-7`}
     >
-      <div>
+      <div data-anim="reveal">
         <Eyebrow>Let’s talk</Eyebrow>
         <h2 className={h2}>
           Let’s talk about
@@ -44,28 +33,31 @@ export default function Contact() {
           your next clients.
         </h2>
         <p className="my-4 text-[#a9b7a7]">
-          Tell us what you sell and where content is holding you back. For careers, share your role and a link to your
-          work.
+          Tell us what you sell and where content is holding you back.
         </p>
-        <p id="contact-setup" className="my-[14px] text-[14px] text-[#a9b7a7]">
-          This form opens a draft in your email app. Review and send it to {EMAIL}.
+        <p className="my-[14px] text-[14px] text-[#a9b7a7]">
+          Prefer email? Write to{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="border-b border-[#6f816b] text-[#f4f1d6] transition-colors duration-200 hover:border-[#f4f1d6]">
+            {CONTACT_EMAIL}
+          </a>
+          .
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="grid grid-cols-2 gap-[17px] max-[800px]:grid-cols-1">
-        <div className={field}>
+      <form onSubmit={onSubmit} onInput={() => state === 'sent' && reset()} className="grid grid-cols-2 gap-[17px] max-[800px]:grid-cols-1">
+        <div data-anim="reveal" className={field}>
           <label htmlFor="name" className={label}>Name</label>
           <input id="name" name="name" autoComplete="name" required className={input} />
         </div>
-        <div className={field}>
+        <div data-anim="reveal" className={field}>
           <label htmlFor="email" className={label}>Email</label>
           <input id="email" name="email" type="email" autoComplete="email" required className={input} />
         </div>
-        <div className={`${field} col-span-full`}>
+        <div data-anim="reveal" className={`${field} col-span-full`}>
           <label htmlFor="business" className={label}>Website or social profile</label>
           <input id="business" name="business" required className={input} />
         </div>
-        <div className={`${field} col-span-full`}>
+        <div data-anim="reveal" className={`${field} col-span-full`}>
           <label htmlFor="package" className={label}>What do you need?</label>
           <select
             id="package"
@@ -79,14 +71,22 @@ export default function Contact() {
             ))}
           </select>
         </div>
-        <div className={`${field} col-span-full`}>
+        <div data-anim="reveal" className={`${field} col-span-full`}>
           <label htmlFor="challenge" className={label}>Your message or content challenge</label>
-          <textarea id="challenge" name="challenge" required className={`${input} min-h-[90px] resize-y`} />
+          <textarea id="challenge" name="message" required className={`${input} min-h-[90px] resize-y`} />
         </div>
-        <button type="submit" aria-describedby="contact-setup" className={`${btn()} col-span-full cursor-pointer`}>
-          Open email draft <span>↗</span>
+        <button
+          data-anim="reveal"
+          type="submit"
+          disabled={state === 'sending'}
+          className={`${btn()} col-span-full cursor-pointer disabled:cursor-wait disabled:opacity-60`}
+        >
+          {state === 'sending' ? 'Sending…' : 'Send message'} <span>↗</span>
         </button>
-        <p role="status" className="col-span-full m-0 text-[14px] text-[#c5d0ba]">{status}</p>
+        <p role="status" className={`col-span-full m-0 text-[14px] ${state === 'error' ? 'text-[#e8a99a]' : 'text-[#c5d0ba]'}`}>
+          {state === 'sent' && 'Thanks — your message has been sent. We’ll get back to you soon.'}
+          {state === 'error' && error}
+        </p>
       </form>
     </section>
   )

@@ -44,6 +44,11 @@ html.hq {
   outline-offset: 5px;
 }
 
+/* Held hidden until components/Animations.tsx reveals them (see noscript fallback in HqRootLayout) */
+@media (prefers-reduced-motion: no-preference) {
+  html.hq [data-anim]:not([data-anim='line']) { visibility: hidden; }
+}
+
 /* Finalized WAGMI silhouette, tinted via mask */
 .hq-mark {
   display: inline-block;

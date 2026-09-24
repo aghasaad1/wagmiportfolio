@@ -1,5 +1,5 @@
 import { InquiryLink, type Topic } from './Inquiry'
-import { SectionHead, btn, btnGhost, h3, section } from './ui'
+import { SectionHead, btn, btnGhost, cardMotion, h3, section } from './ui'
 
 type Pkg = {
   tag: string
@@ -9,7 +9,6 @@ type Pkg = {
   plan: [string, string][]
   yourPart: string
   topic: Topic
-  featured?: boolean
 }
 
 const PACKAGES: Pkg[] = [
@@ -51,7 +50,29 @@ const PACKAGES: Pkg[] = [
     ],
     yourPart: 'Record weekly and share ad results. Your editor and project manager coordinate production.',
     topic: 'Both',
-    featured: true,
+  },
+]
+
+// One step per package on a rising ramp built from the site's own greens (card #13221a →
+// #17271d → featured #1b3023), plus a top strip that brightens. Full class strings so Tailwind sees them.
+const TIERS = [
+  {
+    card: 'border-[#f4f1d621] bg-[#13221a] hover:border-[#f4f1d645]',
+    bar: 'bg-[#f4f1d6]/15',
+    tag: 'text-[#9eafa0]',
+    button: btnGhost,
+  },
+  {
+    card: 'border-[#f4f1d636] bg-[#17271d] hover:border-[#f4f1d65c]',
+    bar: 'bg-[#f4f1d6]/45',
+    tag: 'text-[#b0c2aa]',
+    button: btnGhost,
+  },
+  {
+    card: 'border-[#9eb99a75] bg-[#1b3023] hover:border-[#b9d4b4b0]',
+    bar: 'bg-[#f4f1d6]',
+    tag: 'text-[#c9d6c2]',
+    button: btn,
   },
 ]
 
@@ -68,48 +89,51 @@ export default function Packages() {
       />
 
       <div className="grid grid-cols-3 items-stretch gap-4 max-[800px]:grid-cols-1">
-        {PACKAGES.map((p) => (
-          <article
-            key={p.name}
-            className={`flex flex-col rounded-[22px] border px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${
-              p.featured ? 'border-[#9eb99a75] bg-[#1b3023]' : 'border-[#f4f1d621] bg-[#13221a]'
-            }`}
-          >
-            <div className="text-[14px] font-bold uppercase tracking-[.12em] text-[#b0c2aa]">{p.tag}</div>
-            <h3 className={`${h3} mb-[22px] mt-[17px] min-h-[54px] text-[20px] max-[800px]:mb-5 max-[800px]:min-h-0 max-[800px]:max-w-[260px] max-[800px]:text-[21px]`}>
-              {p.name}
-            </h3>
-            <p className="mb-[19px] mt-0 min-h-[135px] text-[27px] font-bold leading-[1.22] tracking-[-.04em] max-[1000px]:min-h-[145px] max-[1000px]:text-[24px] max-[800px]:min-h-0 max-[800px]:max-w-[460px] max-[800px]:text-[29px]">
-              {p.outcome}
-            </p>
-            <p className="mb-6 mt-0 min-h-[50px] text-[14px] text-[#a9b7a7] max-[800px]:mb-[18px] max-[800px]:min-h-0">{p.fit}</p>
-            <ul className="m-0 list-none p-0">
-              {p.plan.map(([title, body]) => (
-                <li
-                  key={title}
-                  className="m-0 border-t border-[#f4f1d617] py-4 text-[15px] leading-[1.6] text-[#b7c4b0] max-[1000px]:text-[14px] max-[800px]:text-[16px]"
-                >
-                  <strong className="mb-[5px] block text-[15px] text-[#f4f1d6]">{title}</strong>
-                  {body}
-                </li>
-              ))}
-            </ul>
-            <p className="mb-[14px] mt-auto border-t border-[#f4f1d617] pt-[19px] text-[14px] text-[#b7c4b0] max-[800px]:mb-[15px] max-[800px]:text-[15px]">
-              <b className="text-[#f4f1d6]">Your part:</b> {p.yourPart}
-            </p>
-            <InquiryLink
-              topic={p.topic}
-              className={`${(p.featured ? btn : btnGhost)('gap-[22px] rounded-[12px] px-[10px] py-[13px] text-[14px] max-[1000px]:gap-[10px]')} mb-0 mt-[10px] w-full`}
+        {PACKAGES.map((p, i) => {
+          const tier = TIERS[i]
+          return (
+            <article
+              key={p.name}
+              data-anim="reveal"
+              className={`${cardMotion} relative flex flex-col overflow-hidden rounded-[22px] border px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${tier.card}`}
             >
-              Discuss this package <span>↗</span>
-            </InquiryLink>
-          </article>
-        ))}
+              <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-[3px] ${tier.bar}`} />
+              <div className={`text-[14px] font-bold uppercase tracking-[.12em] ${tier.tag}`}>{p.tag}</div>
+              <h3 className={`${h3} mb-[22px] mt-[17px] min-h-[54px] text-[20px] max-[800px]:mb-5 max-[800px]:min-h-0 max-[800px]:max-w-[260px] max-[800px]:text-[21px]`}>
+                {p.name}
+              </h3>
+              <p className="mb-[19px] mt-0 min-h-[135px] text-[27px] font-bold leading-[1.22] tracking-[-.04em] max-[1000px]:min-h-[145px] max-[1000px]:text-[24px] max-[800px]:min-h-0 max-[800px]:max-w-[460px] max-[800px]:text-[29px]">
+                {p.outcome}
+              </p>
+              <p className="mb-6 mt-0 min-h-[50px] text-[14px] text-[#a9b7a7] max-[800px]:mb-[18px] max-[800px]:min-h-0">{p.fit}</p>
+              <ul className="m-0 list-none p-0">
+                {p.plan.map(([title, body]) => (
+                  <li
+                    key={title}
+                    className="m-0 border-t border-[#f4f1d617] py-4 text-[15px] leading-[1.6] text-[#b7c4b0] max-[1000px]:text-[14px] max-[800px]:text-[16px]"
+                  >
+                    <strong className="mb-[5px] block text-[15px] text-[#f4f1d6]">{title}</strong>
+                    {body}
+                  </li>
+                ))}
+              </ul>
+              <p className="mb-[14px] mt-auto border-t border-[#f4f1d617] pt-[19px] text-[14px] text-[#b7c4b0] max-[800px]:mb-[15px] max-[800px]:text-[15px]">
+                <b className="text-[#f4f1d6]">Your part:</b> {p.yourPart}
+              </p>
+              <InquiryLink
+                topic={p.topic}
+                className={`${tier.button('gap-[22px] rounded-[12px] px-[10px] py-[13px] text-[14px] max-[1000px]:gap-[10px]')} mb-0 mt-[10px] w-full`}
+              >
+                Discuss this package <span>↗</span>
+              </InquiryLink>
+            </article>
+          )
+        })}
       </div>
 
-      <div className="mt-[22px] text-center text-[14px] text-[#a7b4a5]">
+      <div data-anim="reveal" className="mt-[22px] text-center text-[14px] text-[#a7b4a5]">
         Not sure where to start?{' '}
-        <a href="#inquiry" className="border-b border-[#6f816b] text-[#f4f1d6]">
+        <a href="#inquiry" className="border-b border-[#6f816b] text-[#f4f1d6] transition-colors duration-200 hover:border-[#f4f1d6]">
           Tell us what’s getting in the way ↗
         </a>
       </div>

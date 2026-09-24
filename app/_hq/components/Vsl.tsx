@@ -13,7 +13,7 @@ export default function Vsl() {
   const [playing, setPlaying] = useState(false)
 
   return (
-    <div className="relative mx-auto max-w-[880px] overflow-hidden rounded-[25px] border border-[#f4f1d625] bg-[#14261e]">
+    <div data-anim="intro" className="relative mx-auto w-[min(100cqw,880px,calc((100cqh_-_60px)*16/9))] self-start overflow-hidden max-[800px]:w-[min(100cqw,calc((100cqh_-_47px)*16/9))] rounded-[25px] border border-[#f4f1d625] bg-[#14261e]">
       <div className="relative aspect-video">
         {playing ? (
           <video
@@ -30,10 +30,12 @@ export default function Vsl() {
             onClick={() => setPlaying(true)}
             className="group absolute inset-0 h-full w-full cursor-pointer"
           >
-            <Image src={POSTER_SRC} alt="" fill sizes="(max-width: 880px) 100vw, 880px" className="object-cover" priority />
+            <Image src={POSTER_SRC} alt="" fill sizes="(max-width: 880px) 100vw, 880px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" priority />
             <span className="absolute inset-0 bg-[#0c1814]/20 transition-colors group-hover:bg-[#0c1814]/5" />
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_4px_18px_#0c1814] transition-transform duration-300 group-hover:scale-110">
-              <Mark className="block h-24 w-24 max-[800px]:h-14 max-[800px]:w-14" />
+              <span data-float className="block">
+                <Mark className="block h-24 w-24 max-[800px]:h-14 max-[800px]:w-14" />
+              </span>
             </span>
           </button>
         )}

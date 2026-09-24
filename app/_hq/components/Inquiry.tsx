@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react'
 
-export const TOPICS = ['Help me choose', 'Paid creative', 'Organic content', 'Both', 'A focused project', 'Careers'] as const
+export const TOPICS = ['Help me choose', 'Paid creative', 'Organic content', 'Both', 'A focused project'] as const
 export type Topic = (typeof TOPICS)[number]
 
 const InquiryContext = createContext<{ topic: Topic; setTopic: (t: Topic) => void }>({
@@ -18,10 +18,14 @@ export function InquiryProvider({ children }: { children: React.ReactNode }) {
 }
 
 // Jumps to the contact form and preselects what the visitor wants to discuss
-export function InquiryLink({ topic, className, children }: { topic: Topic; className?: string; children: React.ReactNode }) {
+export function InquiryLink({
+  topic,
+  children,
+  ...rest
+}: { topic: Topic; className?: string; children: React.ReactNode; 'data-anim'?: string }) {
   const { setTopic } = useInquiry()
   return (
-    <a href="#inquiry" className={className} onClick={() => setTopic(topic)}>
+    <a href="#inquiry" {...rest} onClick={() => setTopic(topic)}>
       {children}
     </a>
   )
