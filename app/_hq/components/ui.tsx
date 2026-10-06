@@ -24,6 +24,13 @@ export const section = 'scroll-mt-5 border-b border-[#f4f1d613] py-[82px] max-[8
 export const summary =
   "flex cursor-pointer list-none items-center justify-between gap-[25px] [&::-webkit-details-marker]:hidden after:text-[23px] after:font-normal after:text-[#95a68d] after:content-['+'] group-open:after:content-['−']"
 
+// Light-yellow accent used to highlight key words (marker sweep behind dark text)
+export const ACCENT = '#f3e38a'
+
+// Small Liquid Glass pill link (e.g. "Not sure where to start?"); pair with a positioned element
+export const glassPill =
+  'hq-glass relative inline-flex items-center gap-2 rounded-full px-[18px] py-[10px] text-[14px] font-bold text-[#f4f1d6] transition-transform duration-300 ease-out hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0 [&>span]:inline-block [&>span]:transition-transform [&>span]:duration-300 hover:[&>span]:translate-x-[3px] hover:[&>span]:-translate-y-[3px]'
+
 type Anim = 'intro' | 'reveal'
 
 export function Eyebrow({ className = 'mb-[23px]', anim, children }: { className?: string; anim?: Anim; children: React.ReactNode }) {
@@ -46,8 +53,46 @@ export function SectionHead({ eyebrow, title, sub }: { eyebrow: string; title: s
   )
 }
 
+// A word or phrase with the accent marker swept behind it. Animations animates [data-highlight-bg]
+// (hero on load, the About statement with scroll); without JS it simply shows highlighted.
+export function Highlight({ children, className = '', ...rest }: { children: React.ReactNode; className?: string; 'data-word'?: boolean; 'data-highlight'?: boolean }) {
+  return (
+    <span {...rest} className={`relative isolate inline-block px-[.12em] text-[#0c1814] ${className}`}>
+      <span
+        data-highlight-bg
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-[.06em] top-[.14em] -z-10 origin-left rounded-[.14em] bg-[#f3e38a] shadow-[0_0_40px_-6px_#f3e38a80]"
+      />
+      {children}
+    </span>
+  )
+}
+
+// Renders **bold** runs inside copy strings (packages, policies, case studies)
+export function Rich({ text, boldClass = 'font-bold text-[#f4f1d6]' }: { text: string; boldClass?: string }) {
+  return (
+    <>
+      {text.split(/(\*\*.*?\*\*)/).map((part, i) =>
+        part.startsWith('**') && part.endsWith('**') ? (
+          <b key={i} className={boldClass}>{part.slice(2, -2)}</b>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  )
+}
+
 export function Mark({ className }: { className: string }) {
   return <span aria-hidden="true" className={`hq-mark ${className}`} />
+}
+
+// Every modal opens scrolled to the top. Its scrolling area is marked data-modal-scroll; reset it now
+// and again next frame, after React has rendered the new content and showModal's autofocus has run.
+export function scrollModalToTop(dialog: HTMLDialogElement) {
+  const reset = () => dialog.querySelectorAll<HTMLElement>('[data-modal-scroll]').forEach((el) => (el.scrollTop = 0))
+  reset()
+  requestAnimationFrame(reset)
 }
 
 // Stops the page behind an open modal from scrolling

@@ -23,17 +23,14 @@ export default function Contact() {
   return (
     <section
       id="inquiry"
-      className={`${section} grid grid-cols-[1fr_1.1fr] gap-[90px] border-b-0 max-[800px]:grid-cols-1 max-[800px]:gap-7`}
+      className={`${section} relative grid grid-cols-[1fr_1.1fr] gap-[90px] border-b-0 max-[800px]:grid-cols-1 max-[800px]:gap-7`}
     >
       <div data-anim="reveal">
         <Eyebrow>Let’s talk</Eyebrow>
-        <h2 className={h2}>
-          Let’s talk about
-          <br />
-          your next clients.
-        </h2>
+        <h2 className={h2}>Tell us where your content or creative is getting stuck.</h2>
         <p className="my-4 text-[#a9b7a7]">
-          Tell us what you sell and where content is holding you back.
+          Share what you sell, what you’re currently producing, and where the bottleneck is. We’ll review it and point
+          you toward the setup that makes the most sense.
         </p>
         <p className="my-[14px] text-[14px] text-[#a9b7a7]">
           Prefer email? Write to{' '}
@@ -53,7 +50,11 @@ export default function Contact() {
           <label htmlFor="email" className={label}>Email</label>
           <input id="email" name="email" type="email" autoComplete="email" required className={input} />
         </div>
-        <div data-anim="reveal" className={`${field} col-span-full`}>
+        <div data-anim="reveal" className={field}>
+          <label htmlFor="phone" className={label}>Phone number</label>
+          <input id="phone" name="phone" type="tel" autoComplete="tel" className={input} />
+        </div>
+        <div data-anim="reveal" className={field}>
           <label htmlFor="business" className={label}>Website or social profile</label>
           <input id="business" name="business" required className={input} />
         </div>
@@ -72,8 +73,14 @@ export default function Contact() {
           </select>
         </div>
         <div data-anim="reveal" className={`${field} col-span-full`}>
-          <label htmlFor="challenge" className={label}>Your message or content challenge</label>
-          <textarea id="challenge" name="message" required className={`${input} min-h-[90px] resize-y`} />
+          <label htmlFor="challenge" className={label}>Where do you need help?</label>
+          <textarea
+            id="challenge"
+            name="message"
+            required
+            placeholder="Tell us what you sell, what you’re currently producing, what is already working, and where you need support."
+            className={`${input} min-h-[110px] resize-y placeholder:text-[#7d8f7e]`}
+          />
         </div>
         <button
           data-anim="reveal"
@@ -81,7 +88,7 @@ export default function Contact() {
           disabled={state === 'sending'}
           className={`${btn()} col-span-full cursor-pointer disabled:cursor-wait disabled:opacity-60`}
         >
-          {state === 'sending' ? 'Sending…' : 'Send message'} <span>↗</span>
+          {state === 'sending' ? 'Sending…' : 'Request a discovery call'} <span>↗</span>
         </button>
         <p role="status" className={`col-span-full m-0 text-[14px] ${state === 'error' ? 'text-[#e8a99a]' : 'text-[#c5d0ba]'}`}>
           {state === 'sent' && 'Thanks — your message has been sent. We’ll get back to you soon.'}

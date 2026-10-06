@@ -1,125 +1,182 @@
 /*
  * Policy text shown in the footer modals.
  *
- * {{...}} marks a business decision the owner must confirm before launch (billing terms, notice
- * periods, refund eligibility, governing law, IP). They render highlighted so they're easy to spot;
- * replace each with the real term and remove the braces. See chatgpt/LAUNCH_CHECKLIST.md:
- * "Do not invent refund windows or governing-law terms."
- *
- * A body item is a paragraph (string) or a bulleted list (string[]).
+ * A body item is a paragraph (string) or a bulleted list (string[]). Strings may use **bold**, and
+ * {{...}} still renders as a highlighted "confirm before launch" field if one is ever needed.
  */
 
 export type PolicySection = { heading: string; body: (string | string[])[] }
-export type Policy = { id: 'terms' | 'privacy' | 'refunds'; title: string; tab: string; updated: string; intro: string; sections: PolicySection[] }
+export type Policy = {
+  id: 'terms' | 'privacy' | 'cookies' | 'refunds'
+  title: string
+  tab: string
+  updated: string
+  intro: string
+  sections: PolicySection[]
+}
 
 const BUSINESS = 'WAGMI HQ LLC'
 const EMAIL = 'aghasaad@wagmihq.com'
-const MAILING = '1001 S. Main St. #12995, Kalispell, MT 59901'
-const UPDATED = 'September 24, 2026'
+// Line breaks inside a string render as line breaks (policy paragraphs use white-space: pre-line)
+const ADDRESS = `**${BUSINESS}**
+1001 S. Main St. #12995
+Kalispell, MT 59901
+United States`
 
 export const POLICIES: Policy[] = [
   {
     id: 'terms',
     title: 'Terms & Conditions',
     tab: 'Terms',
-    updated: UPDATED,
-    intro: `These terms explain how you can use this website and how ${BUSINESS} provides its services. By using the website or engaging us, you agree to them.`,
+    updated: 'October 3, 2026',
+    intro: `These Terms & Conditions govern your use of the ${BUSINESS} website and our services. By using this website, submitting an inquiry, purchasing services, or engaging ${BUSINESS}, you agree to these Terms.`,
     sections: [
       {
-        heading: '1. Who we are',
+        heading: '1. Who We Are',
         body: [
-          `This website is operated by ${BUSINESS} (“WAGMI”, “we”, “us”). Our mailing address is ${MAILING}, and you can reach us at ${EMAIL}.`,
-          'If you sign a proposal, statement of work or service agreement with us, that document sets out the specific terms of your engagement. Where it conflicts with these terms, the signed document takes priority.',
+          `This website is operated by **${BUSINESS}** (“WAGMI,” “we,” “us,” or “our”).`,
+          `**Mailing address:**
+${BUSINESS}
+1001 S. Main St. #12995
+Kalispell, MT 59901
+United States`,
+          `**Email:** ${EMAIL}`,
+          'If you sign a proposal, statement of work, or separate service agreement with us, that agreement will govern the specific scope, pricing, and terms of your engagement. If there is a conflict, the signed agreement takes priority.',
         ],
       },
       {
-        heading: '2. Our services',
+        heading: '2. Our Services',
         body: [
-          'We provide content strategy, video production, organic publishing and paid creative. Descriptions of our packages on this website are summaries to help you choose. They are not binding offers.',
-          'The exact deliverables, quantities, platforms, timelines and fees for your engagement are confirmed in writing before work begins. Media buying, ad spend and community management are not included unless your agreement says so.',
+          'WAGMI provides content strategy, video production, editing, paid creative, VSLs, short-form and long-form content, content repurposing, publishing, scripting, project management, AI-assisted creative, and selected funnel or automation services where agreed.',
+          'Website package descriptions are general summaries only. Exact deliverables, quantities, timelines, platforms, fees, and responsibilities will be confirmed in writing before work begins.',
+          'Media buying, ad spend, software subscriptions, and other third-party costs are not included unless specifically stated.',
         ],
       },
       {
-        heading: '3. What we need from you',
+        heading: '3. What We Need From You',
         body: [
-          'Our work depends on your input. You agree to:',
+          'To deliver the work, you agree to provide the information, recordings, footage, brand assets, account access, approvals, and performance data reasonably required for the project.',
+          'You are responsible for ensuring that materials you provide can legally be used and that claims relating to your business, products, services, testimonials, financial results, health, or other regulated topics are accurate and properly approved.',
+          'For organic content packages, you may be required to complete approximately **60 minutes of prepared recording per week**, depending on the service selected.',
+          'If required inputs or approvals are delayed, delivery dates may also move.',
+        ],
+      },
+      {
+        heading: '4. Your WAGMI Team',
+        body: [
+          'Depending on your package, your account may include a dedicated editor, project manager, strategist, designer, or other production team members.',
+          'WAGMI may use employees, contractors, and specialist partners to deliver services while remaining responsible for managing the work.',
+        ],
+      },
+      {
+        heading: '5. Fees, Billing, and Reserved Capacity',
+        body: [
+          'Fees and billing schedules are stated in your proposal, invoice, checkout page, or service agreement.',
+          'Unless otherwise agreed:',
           [
-            'provide accurate information about your business, offer and audience;',
-            'supply the assets, account access and performance data we need, when we need them;',
-            'record on the agreed schedule (for organic packages, 60 minutes of prepared recording per week);',
-            'give feedback and approvals within a reasonable time; and',
-            'only give us material you own or have permission to use.',
+            'recurring services are billed in advance;',
+            'one-time projects follow the agreed payment schedule;',
+            'work may be paused if payment becomes overdue; and',
+            'recurring services continue until cancelled under the applicable cancellation terms.',
           ],
-          'If inputs arrive late or incomplete, delivery dates may move accordingly.',
+          'Monthly services reserve production capacity for your business. If work cannot be completed because you delay recordings, approvals, assets, access, or other required inputs, billing may continue and unused capacity may expire at the end of that billing period.',
+          'Payments are processed through third-party payment providers. WAGMI does not store complete payment-card details.',
         ],
       },
       {
-        heading: '4. Fees, billing and renewal',
+        heading: '6. Delivery, Approvals, and Revisions',
         body: [
-          'Fees are set out in your proposal or agreement. Payments are processed by third-party payment providers; we do not store full card details.',
-          'Billing: {{billing frequency, e.g. monthly in advance}}. Recurring packages {{confirm whether they renew automatically each billing period until cancelled}}. Cancellation is covered in our Refund & Cancellation Policy.',
-          'If a payment is late, we may pause work until the account is up to date.',
+          'Delivery schedules depend on the service selected.',
+          'Prepared short-form content is typically delivered within approximately **12 to 24 hours**, while long-form content, VSLs, ad creatives, funnels, and other projects follow the agreed production schedule.',
+          'Clients should provide approvals or revision requests within approximately **48 business hours** where reasonably possible.',
+          'Revisions are included when they remain within the approved brief.',
+          'A materially different concept, script, footage set, offer, CTA, duration, audience, format, or creative direction may be treated as new scope and quoted separately.',
         ],
       },
       {
-        heading: '5. Delivery and revisions',
+        heading: '7. Ownership and Project Files',
         body: [
-          'We deliver work on the schedule agreed for your package. Short-form edits are typically delivered 12–24 hours after a prepared recording; other formats follow the agreed production schedule.',
-          'Revisions: {{number of revision rounds included per deliverable}}. Requests that change the agreed scope may be quoted separately.',
+          'You keep ownership of the materials you provide to us.',
+          'Unless otherwise agreed, ownership of custom final deliverables transfers to you after the related fees have been paid in full.',
+          'WAGMI retains ownership of its internal workflows, templates, systems, methods, tools, prompts, processes, and know-how.',
+          'Editable project files, source files, internal working files, and templates are not automatically included unless specifically agreed.',
+          'Projects may also use licensed music, stock assets, fonts, software, templates, AI tools, or other third-party materials. These remain subject to the licenses of their respective providers.',
         ],
       },
       {
-        heading: '6. Intellectual property',
+        heading: '8. AI-Assisted Production',
         body: [
-          'You keep ownership of everything you provide to us, such as your recordings, logos and brand materials.',
-          'Final deliverables: {{confirm ownership, e.g. ownership of final delivered files transfers to you once the related fees are paid in full}}. We keep ownership of our own templates, methods, tools and working files.',
-          'Portfolio use: {{confirm whether we may show your work in our portfolio, and how a client can opt out}}.',
+          'Some projects may use AI-assisted tools for video, images, voice, scripting, editing, ideation, or other production tasks.',
+          'AI-assisted outputs are subject to the terms and technical limitations of the relevant third-party providers, and exact visual, audio, or character consistency cannot always be guaranteed.',
         ],
       },
       {
-        heading: '7. Results',
+        heading: '9. Portfolio and Confidentiality',
         body: [
-          'We plan and produce content to help you win attention and clients, and we use available performance data to improve it. However, results depend on factors outside our control, including your offer, market, distribution, ad spend and sales process. We do not guarantee any specific number of views, leads, clients or revenue.',
+          'Unless confidentiality has been agreed in writing, WAGMI may display publicly released work in our website, portfolio, proposals, social media, case studies, and sales materials.',
+          'We will not intentionally disclose non-public confidential business information.',
+          'Both parties agree to use reasonable care when handling confidential information received during the engagement.',
         ],
       },
       {
-        heading: '8. Third-party platforms',
+        heading: '10. Results and Third-Party Platforms',
         body: [
-          'Content is published on platforms such as YouTube, Instagram, TikTok and Meta, each with its own rules. We are not responsible for platform policy changes, algorithm changes, outages, or actions a platform takes on your account.',
+          'We create content and creative intended to improve attention, communication, distribution, and marketing performance.',
+          'However, we do not guarantee any specific number of:',
+          ['views;', 'followers;', 'leads;', 'sales;', 'clients;', 'ROAS;', 'revenue; or', 'other business results.'],
+          'Results depend on factors outside our control, including your offer, market, audience, distribution, advertising spend, sales process, and competition.',
+          'Past results, testimonials, and case studies do not guarantee future performance.',
+          'We are also not responsible for algorithm changes, platform outages, account suspensions, advertising rejections, reach reductions, or other actions taken by third-party platforms.',
         ],
       },
       {
-        heading: '9. Confidentiality',
+        heading: '11. Cancellation, Refunds, and Payment Disputes',
         body: [
-          'We keep your non-public business information confidential and use it only to deliver our services. Please do the same with any non-public information about our methods and pricing.',
+          'Cancellation and refund terms are governed by our **Refund & Cancellation Policy** and any separate written agreement with you.',
+          `If you believe there is a billing error, please contact **${EMAIL}** before initiating a payment dispute.`,
+          'Where necessary, WAGMI may provide contracts, invoices, communications, approvals, delivery records, and other relevant documentation to payment processors or financial institutions when responding to a dispute.',
         ],
       },
       {
-        heading: '10. Limitation of liability',
+        heading: '12. Suspension and Termination',
         body: [
-          'To the fullest extent permitted by law, we are not liable for indirect or consequential losses, such as lost profits or lost opportunities. Our total liability for any claim relating to our services is limited to {{liability cap, e.g. the fees you paid us in the three months before the claim}}.',
+          'We may pause or end services if:',
+          [
+            'payments remain unpaid;',
+            'a client materially breaches an agreement;',
+            'required cooperation is repeatedly withheld;',
+            'unlawful or deceptive work is requested; or',
+            'continued work would create unreasonable legal, platform, financial, or reputational risk.',
+          ],
+          'Where appropriate, we will provide notice and a reasonable opportunity to resolve the issue.',
         ],
       },
       {
-        heading: '11. Ending our work together',
+        heading: '13. Liability',
         body: [
-          'You can cancel as described in our Refund & Cancellation Policy. We may end or suspend an engagement if fees remain unpaid or these terms are seriously breached, after giving you notice and a reasonable chance to fix the issue.',
+          'To the fullest extent permitted by law, WAGMI will not be liable for indirect, incidental, special, or consequential losses, including lost profits, lost revenue, lost opportunities, advertising spend, or anticipated business.',
+          'Unless a separate written agreement states otherwise, WAGMI’s total liability relating to an engagement will not exceed the fees paid to WAGMI for the relevant services during the **three months immediately before the event giving rise to the claim**.',
+          'Nothing in these Terms limits liability where doing so would be prohibited by law.',
         ],
       },
       {
-        heading: '12. Using this website',
+        heading: '14. General Terms',
         body: [
-          'The content on this website belongs to WAGMI unless stated otherwise. Please do not copy it for commercial use, attempt to disrupt the site, or submit false information through our forms.',
+          'WAGMI operates as an independent contractor. Nothing in these Terms creates an employment relationship, partnership, or joint venture between WAGMI and the client.',
+          'We are not responsible for delays caused by events reasonably outside our control, including internet outages, software failures, platform outages, natural disasters, government action, illness, or similar events.',
+          'The content, branding, design, and original materials on this website belong to WAGMI or are used under license and may not be commercially copied without permission.',
+          'If any part of these Terms is found to be unenforceable, the remaining provisions will continue to apply.',
         ],
       },
       {
-        heading: '13. Governing law',
-        body: ['These terms are governed by the laws of {{state or jurisdiction}}, and any disputes will be handled in {{courts / venue}}.'],
-      },
-      {
-        heading: '14. Changes and contact',
+        heading: '15. Governing Law and Contact',
         body: [
-          `We may update these terms from time to time; the date at the top shows the latest version. Questions? Email ${EMAIL}.`,
+          'These Terms are governed by the laws of the **State of Montana, United States**, without regard to conflict-of-law principles.',
+          'Unless otherwise agreed in writing, any legal proceeding relating to these Terms or our services must be brought in the applicable state or federal courts in Montana.',
+          'Before beginning formal legal proceedings, both parties agree to make a reasonable good-faith effort to resolve the issue directly.',
+          'Questions about these Terms can be sent to:',
+          `${ADDRESS}
+**${EMAIL}**`,
         ],
       },
     ],
@@ -128,84 +185,133 @@ export const POLICIES: Policy[] = [
     id: 'privacy',
     title: 'Privacy Policy',
     tab: 'Privacy',
-    updated: UPDATED,
-    intro: `This policy explains what personal information ${BUSINESS} collects through this website and our services, how we use it, and the choices you have.`,
+    updated: 'October 6, 2026',
+    intro: `${BUSINESS} respects your privacy. This policy explains what information we collect and how we use it.`,
     sections: [
       {
-        heading: '1. Who we are',
-        body: [`${BUSINESS} is responsible for your personal information. Mailing address: ${MAILING}. Email: ${EMAIL}.`],
+        heading: '1. Information We Collect',
+        body: [
+          'We may collect information you provide through our website or when working with us, including:',
+          [
+            'name and email;',
+            'website or social profile;',
+            'business and project information;',
+            'messages submitted through forms;',
+            'billing and transaction information;',
+            'recordings, footage, brand assets, or other materials you provide.',
+          ],
+          'We may also collect basic website data such as IP address, browser type, device information, and pages visited.',
+        ],
       },
       {
-        heading: '2. What we collect',
+        heading: '2. How We Use Information',
         body: [
+          'We use information to:',
           [
-            'Inquiry form: your name, email address, website or social profile, the service you’re interested in, and your message.',
-            'Careers form: your name, email address, role, a link to your work, and what you tell us about yourself.',
-            'Emails and calls: anything you choose to share when you contact us directly.',
-            'Client work: information you provide so we can deliver our services, such as recordings, brand assets, platform access and performance data.',
-            'Payments: billing details are collected and processed by our payment providers. We do not see or store your full card number.',
-            'Website usage: anonymous, aggregated information such as pages viewed, referring site, device and browser type, and page performance, collected through Vercel Web Analytics and Speed Insights. These tools do not use cookies to track you across sites.',
+            'respond to inquiries;',
+            'provide and manage services;',
+            'process payments;',
+            'communicate with clients;',
+            'improve our website and services;',
+            'maintain security and business records.',
+          ],
+          'We do not sell your personal information.',
+        ],
+      },
+      {
+        heading: '3. Third-Party Services',
+        body: [
+          'We may use trusted third-party providers for payments, website hosting, analytics, communication, cloud storage, and project management.',
+          'These providers may receive information only as needed to provide their services.',
+        ],
+      },
+      {
+        heading: '4. Cookies and Analytics',
+        body: [
+          'Our website may use cookies and analytics tools to understand website usage, improve performance, and measure marketing activity.',
+          'Where required, you may be given options to manage non-essential cookies.',
+        ],
+      },
+      {
+        heading: '5. Data Security and Retention',
+        body: [
+          'We use reasonable measures to protect your information and keep it only as long as necessary for providing services, maintaining records, resolving disputes, or meeting legal obligations.',
+          'No online system can guarantee complete security.',
+        ],
+      },
+      {
+        heading: '6. Your Rights',
+        body: [
+          'Depending on where you live, you may have the right to request access to, correction of, or deletion of certain personal information.',
+          `To make a request, contact us at **${EMAIL}**.`,
+        ],
+      },
+      {
+        heading: '7. Changes',
+        body: ['We may update this Privacy Policy from time to time. The date above shows the latest version.'],
+      },
+      {
+        heading: '8. Contact',
+        body: [ADDRESS, `**Email:** ${EMAIL}`],
+      },
+    ],
+  },
+  {
+    id: 'cookies',
+    title: 'Cookie Policy',
+    tab: 'Cookies',
+    updated: 'October 6, 2026',
+    intro: `This Cookie Policy explains how ${BUSINESS} uses cookies and similar technologies on our website.`,
+    sections: [
+      {
+        heading: '1. What Cookies Are',
+        body: [
+          'Cookies are small files stored on your device when you visit a website. They can help a website function properly, remember preferences, and understand how visitors use the site.',
+        ],
+      },
+      {
+        heading: '2. How We Use Cookies',
+        body: [
+          'We may use cookies and similar technologies to:',
+          [
+            'keep the website functioning properly;',
+            'understand how visitors use the website;',
+            'measure website performance;',
+            'improve the user experience;',
+            'measure marketing and advertising activity.',
           ],
         ],
       },
       {
-        heading: '3. How we use it',
+        heading: '3. Types of Cookies We May Use',
         body: [
-          [
-            'to reply to your inquiry and arrange calls;',
-            'to plan, produce, publish and report on your content;',
-            'to bill for our services and keep business records;',
-            'to review job applications;',
-            'to understand how the website is used and improve it; and',
-            'to meet legal, tax and accounting obligations.',
-          ],
-          'We do not sell your personal information, and we do not use it for automated decision-making.',
+          '**Essential cookies**\nNeeded for the website to function properly.',
+          '**Analytics cookies**\nHelp us understand website traffic and visitor behavior.',
+          '**Marketing cookies**\nMay be used to measure advertising performance or support retargeting where applicable.',
         ],
       },
       {
-        heading: '4. Who we share it with',
+        heading: '4. Third-Party Tools',
         body: [
-          'We share information only with service providers who help us run the business, and only as needed:',
-          [
-            'Vercel: website hosting and anonymous analytics;',
-            'Google: business email, which receives the messages sent through our forms;',
-            'payment processors such as Square and Nsave (and Stripe, if we add it): to take payments;',
-            'the platforms you ask us to publish to on your behalf.',
-          ],
-          'We may also disclose information if the law requires it, or to protect our rights.',
+          'Some cookies may be placed by third-party services we use, such as analytics, advertising, payment, or website technology providers.',
+          'Those services operate under their own privacy and cookie policies.',
         ],
       },
       {
-        heading: '5. How long we keep it',
+        heading: '5. Managing Cookies',
         body: [
-          'We keep inquiries and applications for {{retention period, e.g. 24 months}} unless they lead to an engagement. We keep client and billing records for as long as the engagement lasts and afterwards for as long as legal, tax or accounting rules require.',
+          'Where required, you may be able to accept, reject, or manage non-essential cookies through the cookie banner on our website.',
+          'You can also control or delete cookies through your browser settings.',
+          'Disabling certain cookies may affect how some parts of the website work.',
         ],
       },
       {
-        heading: '6. How we protect it',
-        body: [
-          'We use reputable providers, encrypted connections (HTTPS) and access limited to the people who need it. No method of transmission or storage is perfectly secure, but we take reasonable steps to protect your information.',
-        ],
+        heading: '6. Changes',
+        body: ['We may update this Cookie Policy from time to time. The date above shows the latest version.'],
       },
       {
-        heading: '7. Your choices and rights',
-        body: [
-          'Depending on where you live, you may have the right to access, correct, delete or receive a copy of your personal information, and to object to or restrict certain uses. To make a request, email us from the address we have on file. We will respond within {{response time, e.g. 30 days}}.',
-        ],
-      },
-      {
-        heading: '8. International visitors',
-        body: [
-          'We are based in the United States, and our providers may process information in the United States and other countries. By contacting us, you understand your information may be transferred there.',
-        ],
-      },
-      {
-        heading: '9. Children',
-        body: ['This website and our services are intended for businesses and adults. We do not knowingly collect information from children under 16.'],
-      },
-      {
-        heading: '10. Changes and contact',
-        body: [`We may update this policy from time to time; the date at the top shows the latest version. Privacy questions? Email ${EMAIL}.`],
+        heading: '7. Contact',
+        body: [ADDRESS, `**Email:** ${EMAIL}`],
       },
     ],
   },
@@ -213,47 +319,83 @@ export const POLICIES: Policy[] = [
     id: 'refunds',
     title: 'Refund & Cancellation Policy',
     tab: 'Refunds',
-    updated: UPDATED,
-    intro: `This policy explains how to cancel a ${BUSINESS} package or project, and when refunds apply. Your written agreement may include additional terms for your engagement.`,
+    updated: 'October 6, 2026',
+    intro: `This policy explains how cancellations, refunds, recurring services, and client-caused delays are handled by **${BUSINESS}**.`,
     sections: [
       {
-        heading: '1. Cancelling a recurring package',
+        heading: '1. One-Time Projects',
         body: [
-          `You can cancel a recurring package at any time by emailing ${EMAIL}. Please give at least {{notice period, e.g. 14 days}} notice before your next billing date.`,
-          'Your cancellation takes effect at the end of the billing period you have already paid for. We keep working and delivering through that period, and you won’t be charged again after it ends.',
+          'For one-time projects, payments are generally non-refundable once work has started.',
+          'If a project is cancelled before work begins, any refund or credit will depend on the circumstances and any non-recoverable costs already incurred.',
+          'If work has already been completed or partially completed, fees paid for that work are not refundable.',
         ],
       },
       {
-        heading: '2. Minimum commitments',
+        heading: '2. Recurring Services',
         body: [
-          'Some offers include a minimum commitment, for example packages that include a VSL launch build. If yours does, your agreement states the commitment period, and cancellation takes effect at the end of that period.',
+          'Recurring packages are billed in advance for each billing period unless otherwise agreed in writing.',
+          'You may cancel a recurring service by providing written notice before the next billing date.',
+          'Cancellation stops future billing. It does not automatically create a refund for the current billing period.',
+          'Work already scheduled or completed during the current billing period remains payable.',
         ],
       },
       {
-        heading: '3. Refunds',
+        heading: '3. Client Delays and Unused Capacity',
         body: [
-          'Our fees reserve production time and cover work that begins as soon as a billing period starts. For that reason: {{refund eligibility, e.g. fees for a billing period that has already started are non-refundable}}.',
-          'If we are unable to deliver work we have committed to, we will {{remedy, e.g. refund the undelivered portion of your fees}}.',
+          'Monthly services reserve production capacity for your business.',
+          'If work is delayed because recordings, assets, approvals, access, feedback, or other required inputs are not provided on time, billing may continue as scheduled.',
+          'Unused production capacity caused by client delays does not automatically roll over into a future billing period and is not refundable unless agreed otherwise in writing.',
         ],
       },
       {
-        heading: '4. One-off projects',
+        heading: '4. Revisions and Scope Changes',
         body: [
-          'For focused projects, payment terms and any deposit are set out in your project agreement. Deposits: {{confirm whether deposits are refundable, and when}}. If a project is cancelled after work has started, fees for work already completed remain payable.',
+          'Revisions included within the approved brief are handled according to the applicable service agreement.',
+          'Requests that materially change the original concept, script, footage, offer, CTA, duration, target audience, format, or creative direction may be treated as new scope and charged separately.',
+          'Scope changes are not a basis for refunding work already completed.',
         ],
       },
       {
-        heading: '5. Work completed before cancelling',
+        heading: '5. Refund Requests',
         body: [
-          'Any work completed and paid for before your cancellation takes effect will be delivered to you. Ownership of delivered work follows our Terms & Conditions.',
+          `If you believe there has been a billing or service issue, contact us at **${EMAIL}**.`,
+          'Refund requests are reviewed individually based on:',
+          [
+            'the work already completed;',
+            'the stage of the project;',
+            'reserved production capacity;',
+            'third-party costs already incurred;',
+            'the terms of the applicable agreement; and',
+            'the reason for the request.',
+          ],
+          'Approved refunds, where applicable, will be returned through the original payment method where reasonably possible.',
         ],
       },
       {
-        heading: '6. How to request a refund',
+        heading: '6. Missed Deadlines',
         body: [
-          `Email ${EMAIL} with your name, business and the reason for your request. We will reply within {{response time, e.g. 5 business days}}. Approved refunds are returned to your original payment method, and your bank or card provider may take a few extra days to show them.`,
-          'If you have a billing concern, please contact us before opening a dispute with your bank. Most issues can be resolved quickly by talking to us.',
+          'If a delay is caused by WAGMI, we will work with you to adjust the production schedule and resolve the issue.',
+          'If a deadline is missed because of client delays, missing assets, late approvals, platform issues, or events outside our control, that delay does not automatically qualify for a refund.',
         ],
+      },
+      {
+        heading: '7. Chargebacks and Payment Disputes',
+        body: [
+          'If you believe a payment was incorrect, please contact us before opening a chargeback or payment dispute.',
+          'We may provide contracts, invoices, communications, approvals, delivery records, and other relevant documentation to payment processors or financial institutions when responding to a dispute.',
+        ],
+      },
+      {
+        heading: '8. How to Cancel',
+        body: [
+          'To cancel a recurring service or request a review of a payment issue, email:',
+          `**${EMAIL}**`,
+          'Please include your name, company name, and the service you want to cancel.',
+        ],
+      },
+      {
+        heading: '9. Contact',
+        body: [ADDRESS, `**Email:** ${EMAIL}`],
       },
     ],
   },

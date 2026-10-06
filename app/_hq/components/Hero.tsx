@@ -1,4 +1,4 @@
-import { Eyebrow, btn } from './ui'
+import { Eyebrow, Highlight, btn } from './ui'
 import Vsl from './Vsl'
 
 export default function Hero() {
@@ -9,15 +9,15 @@ export default function Hero() {
     <div className="flex h-[calc(100dvh-76px)] flex-col pb-[clamp(12px,2.6dvh,24px)] max-[800px]:h-[calc(100dvh-68px)]">
       <section className="shrink-0 pb-[clamp(14px,3.6dvh,36px)] pt-[clamp(14px,4dvh,40px)] text-center max-[800px]:pt-[clamp(12px,3.4dvh,32px)] max-[800px]:pb-[clamp(12px,3.2dvh,30px)]">
         <Eyebrow anim="intro" className="mb-[clamp(10px,2.3dvh,23px)]">
-          For coaches &amp; agency owners
+          For businesses with a proven offer
         </Eyebrow>
         <h1 data-anim="intro" className="mx-auto mb-[clamp(10px,2.2dvh,22px)] mt-0 text-[clamp(32px,min(5.3vw,7.4dvh),66px)] font-extrabold leading-[1.12] tracking-[-.05em] max-[800px]:max-w-[530px] max-[800px]:text-[clamp(30px,5.6dvh,43px)]">
-          Your done-for-you content funnel.
+          Your done-for-you <Highlight data-highlight>content funnel</Highlight>.
         </h1>
         <p data-anim="intro" className="mx-auto mb-[clamp(14px,2.9dvh,29px)] mt-0 max-w-[640px] text-[clamp(15px,2.1dvh,18px)] leading-[1.65] text-[#b8c1b7] max-[800px]:max-w-[490px] max-[800px]:text-[clamp(14px,2dvh,16px)]">
-          Organic and paid content built around your offer.
+          <strong className="font-bold text-[#e3e6cf]">Organic and paid content built to turn attention into clients.</strong>
           <br />
-          Turn attention into clients. Leave the content work to us.
+          You run the business. We handle the content.
         </p>
         <a data-anim="intro" className={btn()} href="#inquiry">
           Request a discovery call <span>↗</span>

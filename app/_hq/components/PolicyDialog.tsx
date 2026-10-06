@@ -2,9 +2,9 @@
 
 import { Fragment, useEffect, useRef } from 'react'
 import { POLICIES, type Policy } from './policies'
-import { lockPageScroll } from './ui'
+import { Rich, lockPageScroll } from './ui'
 
-// Renders {{...}} owner-to-confirm fields highlighted so they're easy to find before launch
+// Renders **bold** runs, plus {{...}} owner-to-confirm fields highlighted so they're easy to find before launch
 function Text({ children }: { children: string }) {
   return (
     <>
@@ -18,7 +18,9 @@ function Text({ children }: { children: string }) {
             {part.slice(2, -2)}
           </mark>
         ) : (
-          <Fragment key={i}>{part}</Fragment>
+          <Fragment key={i}>
+            <Rich text={part} />
+          </Fragment>
         ),
       )}
     </>
@@ -57,7 +59,7 @@ export default function PolicyDialog({
       <div className="flex h-full flex-col">
         {/* Header: tabs + close */}
         <div className="flex items-center justify-between gap-4 border-b border-[#f4f1d61c] px-7 py-4 max-[800px]:px-5">
-          <div role="tablist" aria-label="Policies" className="flex gap-1 rounded-full border border-[#f4f1d61f] p-1">
+          <div role="tablist" aria-label="Policies" className="flex min-w-0 gap-1 overflow-x-auto rounded-full border border-[#f4f1d61f] p-1 [scrollbar-width:none]">
             {POLICIES.map((p) => {
               const on = p.id === active
               return (
@@ -67,7 +69,7 @@ export default function PolicyDialog({
                   role="tab"
                   aria-selected={on}
                   onClick={() => onSelect(p.id)}
-                  className={`cursor-pointer rounded-full px-4 py-[7px] text-[13px] font-bold transition-colors duration-300 max-[420px]:px-3 ${
+                  className={`shrink-0 cursor-pointer rounded-full px-4 py-[7px] text-[13px] font-bold transition-colors duration-300 max-[480px]:px-[10px] max-[480px]:text-[12px] ${
                     on ? 'bg-[#f4f1d6] text-[#0c1814]' : 'bg-transparent text-[#a9b7a7] hover:text-[#f4f1d6]'
                   }`}
                 >
@@ -87,20 +89,22 @@ export default function PolicyDialog({
         </div>
 
         {/* Scrolling policy body */}
-        <div ref={bodyRef} role="tabpanel" className="flex-1 overflow-y-auto overscroll-contain px-9 pb-12 pt-8 max-[800px]:px-5">
+        <div ref={bodyRef} data-modal-scroll role="tabpanel" className="flex-1 overflow-y-auto overscroll-contain px-9 pb-12 pt-8 max-[800px]:px-5">
           <p className="m-0 text-[12px] font-bold uppercase tracking-[.16em] text-[#8fa18f]">WAGMI HQ LLC</p>
           <h2 id="policy-title" className="mb-2 mt-3 text-[clamp(28px,4vw,38px)] font-extrabold leading-[1.1] tracking-[-.04em]">
             {policy.title}
           </h2>
           <p className="m-0 text-[13px] text-[#8fa18f]">Last updated {policy.updated}</p>
-          <p className="mb-0 mt-6 max-w-[640px] text-[16px] leading-[1.7] text-[#c9d2c2]">{policy.intro}</p>
+          <p className="mb-0 mt-6 max-w-[640px] text-[16px] leading-[1.7] text-[#c9d2c2]">
+            <Text>{policy.intro}</Text>
+          </p>
 
           {policy.sections.map((section) => (
             <section key={section.heading} className="mt-9 border-t border-[#f4f1d614] pt-7">
               <h3 className="m-0 text-[17px] font-bold tracking-[-.02em]">{section.heading}</h3>
               {section.body.map((item, i) =>
                 typeof item === 'string' ? (
-                  <p key={i} className="mb-0 mt-3 max-w-[660px] text-[15px] leading-[1.75] text-[#aebaa9]">
+                  <p key={i} className="mb-0 mt-3 max-w-[660px] whitespace-pre-line text-[15px] leading-[1.75] text-[#aebaa9]">
                     <Text>{item}</Text>
                   </p>
                 ) : (

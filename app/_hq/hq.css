@@ -33,6 +33,22 @@ html.hq {
   cursor: auto;
 }
 
+/*
+ * Ambient page light: soft green and warm-yellow glows fixed behind everything (a fixed layer is
+ * composited once, so it costs nothing while scrolling). Rendered by HqHomePage as .hq-aurora.
+ */
+.hq-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 12% 8%, rgb(63 122 80 / .22), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 88% 14%, rgb(243 227 138 / .07), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 92%, rgb(63 122 80 / .16), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 6% 88%, rgb(243 227 138 / .045), transparent 70%);
+}
+
 /* Legacy grain overlay, footer and option styling */
 .hq body::after { content: none; }
 .hq footer { position: static; background: none; z-index: auto; clear: none; }

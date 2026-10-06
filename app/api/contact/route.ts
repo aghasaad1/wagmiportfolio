@@ -8,8 +8,19 @@ import nodemailer from 'nodemailer'
  *   kind: 'careers'  — careers modal
  */
 export type ContactPayload =
-  | { kind: 'inquiry'; name: string; email: string; business: string; topic: string; message: string }
-  | { kind: 'careers'; name: string; email: string; role: string; portfolio: string; message: string }
+  | { kind: 'inquiry'; name: string; email: string; phone?: string; business: string; topic: string; message: string }
+  | {
+      kind: 'careers'
+      name: string
+      email: string
+      role: string
+      workPreference: string
+      location: string
+      portfolio: string
+      message: string
+      experience: string
+      availability: string
+    }
 
 const clean = (v: unknown, max = 5000) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 
@@ -43,10 +54,15 @@ export async function POST(request: Request) {
       ? [
           ['Website / profile', clean(body.business, 500) || '—'],
           ['Interested in', clean(body.topic, 100) || '—'],
+          ['Phone', clean(body.phone, 50) || '—'],
         ]
       : [
           ['Role', clean(body.role, 100) || '—'],
+          ['Work preference', clean(body.workPreference, 100) || '—'],
+          ['Location', clean(body.location, 200) || '—'],
+          ['Availability', clean(body.availability, 100) || '—'],
           ['Work', clean(body.portfolio, 500) || '—'],
+          ['Relevant experience', clean(body.experience) || '—'],
         ]
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, APPLY_TO_EMAIL } = process.env
@@ -87,7 +103,7 @@ export async function POST(request: Request) {
   const html = `<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${label}</title></head>
 <body style="margin:0;padding:0;background-color:${BG};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(name)} · ${escapeHtml(rows.map((r) => r[1]).join(' · '))}</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(name)} · ${escapeHtml(rows.slice(0, 3).map((r) => r[1]).join(' · '))}</div>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:${BG};">
     <tr><td align="center" style="padding:32px 16px;">
       <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">

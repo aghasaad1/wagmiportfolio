@@ -21,6 +21,7 @@ const shown = { autoAlpha: 1, y: 0, ease: EASE, clearProps: 'transform' }
  *   data-scrub         statement lit word by word with scroll
  *   data-timeline      process timeline (fill + nodes lit with scroll)
  *   data-blob          ambient light behind the glass package cards (slow drift)
+ *   data-parallax      review columns drifting at different speeds with scroll
  * hq.css hides the animated elements until GSAP reveals them.
  */
 export default function Animations() {
@@ -32,6 +33,9 @@ export default function Animations() {
         .timeline({ defaults: { duration: 0.9 } })
         .fromTo('[data-anim="nav"]', { autoAlpha: 0, y: -16 }, shown)
         .fromTo('[data-anim="intro"]', { autoAlpha: 0, y: 26 }, { ...shown, stagger: 0.09 }, '-=0.6')
+        // Then the accent marker sweeps behind the hero's key phrase
+        .fromTo('[data-anim="intro"] [data-highlight-bg]', { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: 'power2.inOut' }, '-=0.5')
+        .fromTo('[data-anim="intro"] [data-highlight]', { color: '#f4f1d6' }, { color: '#0c1814', duration: 0.35, ease: 'none' }, '<0.2')
 
       ScrollTrigger.batch('[data-anim="reveal"]', {
         // "top 90%", capped at the max scroll so elements at the very end of the page still fire
@@ -52,15 +56,18 @@ export default function Animations() {
         ),
       )
 
-      // Statement lit word by word as it scrolls through, then the highlighter sweeps behind the key word
+      // Statement lit word by word as it scrolls through; each highlighted word gets its marker sweep
+      // just after it lights up
       gsap.utils.toArray<HTMLElement>('[data-scrub]').forEach((el) => {
         const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top 82%', end: 'bottom 42%', scrub: 0.6 } })
-        tl.fromTo(el.querySelectorAll('[data-word]'), { opacity: 0.14 }, { opacity: 1, stagger: 0.1, ease: 'none' })
-        const hl = el.querySelector('[data-highlight]')
-        if (hl) {
-          tl.fromTo(hl.querySelector('[data-highlight-bg]'), { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: 'power2.out' }, '>-0.1')
-            .fromTo(hl, { color: '#f4f1d6' }, { color: '#0c1814', duration: 0.3 }, '<0.15')
-        }
+        const words = gsap.utils.toArray<HTMLElement>(el.querySelectorAll('[data-word]'))
+        tl.fromTo(words, { opacity: 0.14 }, { opacity: 1, duration: 0.5, stagger: 0.1, ease: 'none' })
+        words.forEach((word, i) => {
+          if (!word.hasAttribute('data-highlight')) return
+          const at = i * 0.1 + 0.35
+          tl.fromTo(word.querySelector('[data-highlight-bg]'), { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: 'power2.out' }, at)
+            .fromTo(word, { color: '#f4f1d6' }, { color: '#0c1814', duration: 0.3 }, at + 0.15)
+        })
       })
 
       gsap.to('[data-float]', { scale: 1.07, duration: 1.6, ease: 'sine.inOut', yoyo: true, repeat: -1 })
@@ -101,6 +108,19 @@ export default function Animations() {
           if (seg) tl.fromTo(seg, { scaleY: 0 }, { scaleY: 1, duration: step, ease: 'none' }, i * step)
         })
         if (!phone) tl.fromTo(el.querySelector('[data-timeline-fill]'), { scaleX: 0 }, { scaleX: 1, duration: 1, ease: 'none' }, 0)
+      })
+    })
+
+    // Review columns drift at different speeds while the section scrolls past (desktop only; phones
+    // get a single column revealed card by card). data-parallax = px travelled each way.
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 801px)', () => {
+      gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
+        const d = Number(el.dataset.parallax) || 0
+        gsap.fromTo(
+          el,
+          { y: d },
+          { y: -d, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.8 } },
+        )
       })
     })
 

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Mark } from './ui'
 
-// "Introduction Agha Saad" (youtube.com/watch?v=e4okzv6PPoU), self-hosted so no YouTube player UI shows
+// WAGMI intro (youtu.be/x1hFVlqxCgM, temporary cut), self-hosted so no YouTube player UI shows
 const VIDEO_SRC = '/hq/intro.mp4'
 const POSTER_SRC = '/hq/intro-poster.jpg' // the video's YouTube thumbnail
 
@@ -26,7 +26,7 @@ export default function Vsl() {
           />
         ) : (
           <button
-            aria-label="Play video: See how the system works"
+            aria-label="Play video: See how WAGMI builds the content and creative around your offer"
             onClick={() => setPlaying(true)}
             className="group absolute inset-0 h-full w-full cursor-pointer"
           >
@@ -37,16 +37,16 @@ export default function Vsl() {
               <span
                 data-float
                 style={{ '--glass-dark': 0.12, '--glow': 1, '--gx': 34, '--gy': 18 } as React.CSSProperties}
-                className="hq-glass relative grid h-[118px] w-[118px] place-items-center rounded-full max-[800px]:h-[76px] max-[800px]:w-[76px]"
+                className="hq-glass relative grid h-[84px] w-[84px] place-items-center rounded-full max-[800px]:h-[58px] max-[800px]:w-[58px]"
               >
-                <Mark className="ml-1 block h-14 w-14 drop-shadow-[0_2px_8px_#0c181499] max-[800px]:h-9 max-[800px]:w-9" />
+                <Mark className="ml-0.5 block h-12 w-12 drop-shadow-[0_2px_8px_#0c181499] max-[800px]:h-8 max-[800px]:w-8" />
               </span>
             </span>
           </button>
         )}
       </div>
       <div className="flex justify-between gap-5 border-t border-[#ffffff0d] px-[23px] py-[17px] text-[14px] max-[800px]:px-[15px] max-[800px]:py-3 max-[800px]:text-[12px]">
-        <span>See how the system works</span>
+        <span className="font-bold">See how WAGMI builds the content and creative around your offer.</span>
       </div>
     </div>
   )

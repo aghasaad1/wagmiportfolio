@@ -3,17 +3,85 @@
 import { useId, useState } from 'react'
 import { Eyebrow, h2, section } from './ui'
 
-const FAQS = [
-  ['Who is this for?', 'Coaches, agency owners, and expertise-led businesses with an existing offer and a content bottleneck.'],
-  ['How much do I need to record?', 'Organic packages require 60 minutes per week, with scripts prepared beforehand. Paid-creative requirements depend on your assets and the concepts.'],
-  ['What if I don’t have winning ads?', 'We start with creative to test, then use the performance data you share to guide the next batch.'],
-  ['Is ads management included?', 'Paid-creative production and media buying are separate. Meta ads management can be discussed as an additional service.'],
-  ['How fast will I receive content?', 'Short-form edits arrive within 12–24 hours after recording, once scripting and preparation are complete. Other formats follow the agreed schedule.'],
-  ['Will this bring me clients?', 'That is the goal behind the strategy. Outcomes also depend on your offer, market, distribution and sales process. We use available performance data to improve the content.'],
+// Each answer is a list of paragraphs
+const FAQS: [string, string[]][] = [
+  [
+    'Who is this for?',
+    [
+      'WAGMI is built for businesses with a proven offer that need more content and creative without building the entire production team in-house.',
+      'That includes performance marketing agencies, DTC brands, and coaches with offers that are already selling.',
+    ],
+  ],
+  [
+    'What exactly does WAGMI handle?',
+    [
+      'Depending on the package, we can handle creative planning, scripts, hooks, video editing, paid ad creatives, VSLs, short-form content, long-form content, repurposing, revisions, and delivery.',
+      'Your exact scope is agreed before we start.',
+    ],
+  ],
+  [
+    'Do I need to provide the ideas and briefs?',
+    [
+      'Not for everything.',
+      'We start with your offer, audience, existing content, previous creatives, and what has already worked. From there, we help build the angles, hooks, concepts, and production plan.',
+      'You still provide the business context. We handle the content and creative execution around it.',
+    ],
+  ],
+  [
+    'What if I don’t have winning ads yet?',
+    [
+      'That’s fine.',
+      'We can start by creating different angles, hooks, and concepts to test. Once you have performance data, those results help guide what we produce next.',
+    ],
+  ],
+  [
+    'Do you manage the ads too?',
+    [
+      'Paid creative production and media buying are separate.',
+      'Our core role is creating the ads and creative assets. Meta ads management can be discussed separately where needed.',
+    ],
+  ],
+  [
+    'How much do I need to record?',
+    [
+      'For organic content, around 60 minutes of prepared recording per week can be enough depending on the package.',
+      'For paid creative, recording requirements depend on the concept, available assets, UGC, product footage, and campaign direction.',
+    ],
+  ],
+  [
+    'How fast is the turnaround?',
+    [
+      'Prepared short-form creative can typically be turned around within 12–24 hours.',
+      'Long-form videos, VSLs, larger creative batches, and other formats follow the production schedule agreed for the project.',
+    ],
+  ],
+  [
+    'What happens after the first batch?',
+    [
+      'We look at what the audience and campaigns are telling us.',
+      'Strong hooks, topics, angles, and concepts can be developed further. Weak ones can be dropped or changed.',
+      'The goal is to make the next batch from what we have learned instead of starting from zero again.',
+    ],
+  ],
+  [
+    'Do you guarantee results?',
+    [
+      'No agency can honestly guarantee views, leads, sales, ROAS, or revenue.',
+      'Those results also depend on your offer, market, media buying, landing pages, pricing, sales process, and other factors outside creative production.',
+      'What we can control is the quality, consistency, speed, and strategy behind the content and creative we produce.',
+    ],
+  ],
+  [
+    'Can I start with a single project?',
+    [
+      'Yes.',
+      'You can start with a focused project such as a VSL, paid ad creative batch, long-form video, short-form batch, funnel creative, or another agreed project before moving into a monthly system.',
+    ],
+  ],
 ]
 
 // Height animates both ways via the grid-rows 0fr → 1fr trick (native <details> can't animate closing).
-function FaqItem({ question, answer }: { question: string; answer: string }) {
+function FaqItem({ question, answer }: { question: string; answer: string[] }) {
   const [open, setOpen] = useState(false)
   const id = useId()
 
@@ -49,13 +117,17 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
         }`}
       >
         <div className="overflow-hidden" inert={!open}>
-          <p
-            className={`m-0 max-w-[580px] pb-5 text-[15px] text-[#a9b7a7] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none ${
+          <div
+            className={`max-w-[580px] pb-5 text-[15px] text-[#a9b7a7] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none ${
               open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
           >
-            {answer}
-          </p>
+            {answer.map((para) => (
+              <p key={para} className="m-0 [&+&]:mt-3">
+                {para}
+              </p>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useOpenCareers } from './Careers'
-import { Mark, lockPageScroll } from './ui'
+import { Mark, lockPageScroll, scrollModalToTop } from './ui'
 import PolicyDialog from './PolicyDialog'
 import { POLICIES, type Policy } from './policies'
 
@@ -23,6 +23,7 @@ export default function Footer() {
     const dialog = dialogRef.current
     if (!dialog) return
     dialog.showModal()
+    scrollModalToTop(dialog)
     lockPageScroll(true)
     if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       gsap.fromTo(dialog, { autoAlpha: 0, y: 24, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: 'power3.out', clearProps: 'transform' })
@@ -38,8 +39,8 @@ export default function Footer() {
             WAGMI HQ LLC
           </a>
           <p className={`${colText} mb-5 mt-4 max-w-[300px]`}>
-            Content strategy, video production and distribution. Organic content and paid creative built around your
-            business.
+            Content strategy, video production and creative execution for businesses with proven offers. Organic
+            content, paid creative and VSLs built around what you already sell.
           </p>
           <a
             href="mailto:aghasaad@wagmihq.com"

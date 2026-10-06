@@ -10,6 +10,13 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      // YouTube thumbnails for the HQ VSL slider
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        port: '',
+        pathname: '/vi/**',
+      },
     ],
     formats: ['image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],

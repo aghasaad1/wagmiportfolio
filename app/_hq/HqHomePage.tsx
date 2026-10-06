@@ -1,8 +1,10 @@
 import Nav from './components/Nav'
 import Hero from './components/Hero'
-import { Clients, About } from './components/ClientsAbout'
+import Clients from './components/Clients'
+import About from './components/About'
 import Packages from './components/Packages'
 import Work from './components/Work'
+import Reviews from './components/Reviews'
 import { WhyUs, Process, FocusedProjects } from './components/HowWeWork'
 import Contact from './components/Contact'
 import Faq from './components/Faq'
@@ -19,6 +21,7 @@ export default function HqHomePage() {
       <CareersProvider>
         <Animations />
         <GlassDefs />
+        <div aria-hidden="true" className="hq-aurora" />
         <Nav />
         <main id="top" className="mx-auto max-w-290 px-8 max-[800px]:px-5">
           <Hero />
@@ -26,6 +29,7 @@ export default function HqHomePage() {
           <About />
           <Work />
           <Packages />
+          <Reviews />
           <WhyUs />
           <Process />
           <FocusedProjects />

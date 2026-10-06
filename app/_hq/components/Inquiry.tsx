@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react'
 
-export const TOPICS = ['Help me choose', 'Paid creative', 'Organic content', 'Both', 'A focused project'] as const
+export const TOPICS = ['Help me choose', 'Paid creative', 'Organic content', 'Organic + paid', 'Focused project'] as const
 export type Topic = (typeof TOPICS)[number]
 
 const InquiryContext = createContext<{ topic: Topic; setTopic: (t: Topic) => void }>({
