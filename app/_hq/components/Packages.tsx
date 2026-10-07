@@ -1,6 +1,7 @@
 import { InquiryLink, type Topic } from './Inquiry'
 import { GlassArticle } from './Glass'
-import { Rich, SectionHead, btn, btnGhost, cardMotion, glassPill, h3, section } from './ui'
+import SwipeRow from './SwipeRow'
+import { ArrowUpRight, btn, btnGhost, cardMotion, glassPill, h3, Rich, section, SectionHead } from './ui'
 
 type Pkg = {
   tag: string
@@ -101,62 +102,70 @@ export default function Packages() {
         sub="Choose paid creative, organic content, or both."
       />
 
-      <div className="relative grid grid-cols-3 items-stretch gap-4 max-[800px]:grid-cols-1">
+      <div className="relative">
         {/* Ambient light for the glass cards to frost; drifts on desktop (Animations: data-blob) */}
         <div aria-hidden="true" className="pointer-events-none absolute -inset-x-10 -inset-y-6 -z-10 max-[800px]:-inset-x-5">
           <span data-blob className="absolute left-[4%] top-[18%] h-[340px] w-[340px] rounded-full bg-[#9eb99a] opacity-[.22] blur-[90px] will-change-transform max-[800px]:h-[240px] max-[800px]:w-[240px]" />
           <span data-blob className="absolute left-[38%] top-[48%] h-[380px] w-[380px] rounded-full bg-[#3f7a50] opacity-[.45] blur-[100px] will-change-transform max-[800px]:left-[18%] max-[800px]:h-[260px] max-[800px]:w-[260px]" />
           <span data-blob className="absolute right-[2%] top-[8%] h-[400px] w-[400px] rounded-full bg-[#f4f1d6] opacity-[.2] blur-[100px] will-change-transform max-[800px]:bottom-[6%] max-[800px]:top-auto max-[800px]:h-[280px] max-[800px]:w-[280px]" />
         </div>
-        {PACKAGES.map((p, i) => {
-          const tier = TIERS[i]
-          return (
-            <GlassArticle
-              key={p.name}
-              data-anim="reveal"
-              style={tier.glass as React.CSSProperties}
-              className={`${cardMotion} hq-glass hq-glass-frost relative flex flex-col overflow-hidden rounded-[22px] border px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${tier.card}`}
-            >
-              <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-[3px] ${tier.bar}`} />
-              <div className={`text-[14px] font-bold uppercase tracking-[.12em] ${tier.tag}`}>{p.tag}</div>
-              <h3 className={`${h3} mb-[22px] mt-[17px] min-h-[54px] text-[20px] max-[800px]:mb-5 max-[800px]:min-h-0 max-[800px]:max-w-[260px] max-[800px]:text-[21px]`}>
-                {p.name}
-              </h3>
-              <p className="mb-[19px] mt-0 min-h-[135px] text-[27px] font-bold leading-[1.22] tracking-[-.04em] max-[1000px]:min-h-[145px] max-[1000px]:text-[24px] max-[800px]:min-h-0 max-[800px]:max-w-[460px] max-[800px]:text-[29px]">
-                {p.outcome}
-              </p>
-              <p className="mb-6 mt-0 min-h-[88px] text-[14px] text-[#a9b7a7] max-[1000px]:min-h-[110px] max-[800px]:mb-[18px] max-[800px]:min-h-0">
-                <Rich text={p.fit} boldClass="font-bold text-[#e3e6cf]" />
-              </p>
-              <ul className="m-0 list-none p-0">
-                {p.plan.map(([title, body]) => (
-                  <li
-                    key={title}
-                    className="m-0 border-t border-[#f4f1d617] py-4 text-[15px] leading-[1.6] text-[#b7c4b0] max-[1000px]:text-[14px] max-[800px]:text-[16px]"
-                  >
-                    <strong className="mb-[5px] block text-[15px] text-[#f4f1d6]">{title}</strong>
-                    <Rich text={body} />
-                  </li>
-                ))}
-              </ul>
-              <p className="mb-[14px] mt-auto border-t border-[#f4f1d617] pt-[19px] text-[14px] text-[#b7c4b0] max-[800px]:mb-[15px] max-[800px]:text-[15px]">
-                <b className="text-[#f4f1d6]">Your part:</b> {p.yourPart}
-              </p>
-              <InquiryLink
-                topic={p.topic}
-                className={`${tier.button('gap-[22px] rounded-[12px] px-[10px] py-[13px] text-[14px] max-[1000px]:gap-[10px]')} mb-0 mt-[10px] w-full`}
+        {/* Three columns on desktop; below 1000px a swipeable row (cards keep their full width instead of stacking) */}
+        <SwipeRow
+          aria-label="Packages"
+          className="relative grid grid-cols-3 items-stretch gap-4 max-[1000px]:-mx-8 max-[1000px]:flex max-[1000px]:snap-x max-[1000px]:snap-mandatory max-[1000px]:scroll-px-8 max-[1000px]:overflow-x-auto max-[1000px]:overscroll-x-contain max-[1000px]:px-8 max-[1000px]:py-4 max-[1000px]:[scrollbar-width:none] max-[800px]:-mx-5 max-[800px]:scroll-px-5 max-[800px]:px-5 [&::-webkit-scrollbar]:hidden"
+        >
+          {PACKAGES.map((p, i) => {
+            const tier = TIERS[i]
+            return (
+              <GlassArticle
+                key={p.name}
+                data-anim="reveal"
+                style={tier.glass as React.CSSProperties}
+                className={`${cardMotion} hq-glass hq-glass-frost relative flex flex-col overflow-hidden rounded-[22px] border max-[1000px]:w-[min(360px,82vw)] max-[1000px]:shrink-0 max-[1000px]:snap-start px-[23px] py-[27px] max-[1000px]:px-[18px] max-[1000px]:py-6 max-[800px]:p-7 ${tier.card}`}
               >
-                {p.cta} <span>↗</span>
-              </InquiryLink>
-            </GlassArticle>
-          )
-        })}
+                <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-[3px] ${tier.bar}`} />
+                <div className={`text-[14px] font-bold uppercase tracking-[.12em] ${tier.tag}`}>{p.tag}</div>
+                <h3 className={`${h3} mb-[22px] mt-[17px] min-h-[54px] text-[20px] max-[800px]:mb-5 max-[800px]:min-h-0 max-[800px]:max-w-[260px] max-[800px]:text-[21px]`}>
+                  {p.name}
+                </h3>
+                <p className="mb-[19px] mt-0 min-h-[135px] text-[27px] font-bold leading-[1.22] tracking-[-.04em] max-[1000px]:min-h-[145px] max-[1000px]:text-[24px] max-[800px]:min-h-0 max-[800px]:max-w-[460px] max-[800px]:text-[29px]">
+                  {p.outcome}
+                </p>
+                <p className="mb-6 mt-0 min-h-[88px] text-[14px] text-[#a9b7a7] max-[1000px]:min-h-[110px] max-[800px]:mb-[18px] max-[800px]:min-h-0">
+                  <Rich text={p.fit} boldClass="font-bold text-[#e3e6cf]" />
+                </p>
+                <ul className="m-0 list-none p-0">
+                  {p.plan.map(([title, body]) => (
+                    <li
+                      key={title}
+                      className="m-0 border-t border-[#f4f1d617] py-4 text-[15px] leading-[1.6] text-[#b7c4b0] max-[1000px]:text-[14px] max-[800px]:text-[16px]"
+                    >
+                      <strong className="mb-[5px] block text-[15px] text-[#f4f1d6]">{title}</strong>
+                      <Rich text={body} />
+                    </li>
+                  ))}
+                </ul>
+                <p className="mb-[14px] mt-auto border-t border-[#f4f1d617] pt-[19px] text-[14px] text-[#b7c4b0] max-[800px]:mb-[15px] max-[800px]:text-[15px]">
+                  <b className="text-[#f4f1d6]">Your part:</b> {p.yourPart}
+                </p>
+                <InquiryLink
+                  topic={p.topic}
+                  className={`${tier.button('gap-[22px] rounded-[12px] px-[10px] py-[13px] text-[14px] max-[1000px]:gap-[10px]')} mb-0 mt-[10px] w-full`}
+                >
+                  {p.cta} <span><ArrowUpRight /></span>
+                </InquiryLink>
+              </GlassArticle>
+            )
+          })}
+        </SwipeRow>
       </div>
+
+      <p className="mb-0 mt-3 hidden text-center text-[13px] text-[#8fa18f] max-[1000px]:block">Swipe to compare the three packages</p>
 
       <div data-anim="reveal" className="mt-8 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-center text-[14px] text-[#a7b4a5]">
         Not sure where to start?
         <InquiryLink topic="Help me choose" className={glassPill}>
-          Tell us what’s getting in the way <span>↗</span>
+          Tell us what’s getting in the way <span><ArrowUpRight /></span>
         </InquiryLink>
       </div>
     </section>

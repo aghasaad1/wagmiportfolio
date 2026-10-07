@@ -82,7 +82,7 @@ export default function PolicyDialog({
             type="button"
             onClick={close}
             aria-label="Close policies"
-            className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border border-[#f4f1d629] bg-transparent text-[18px] text-[#a9b7a7] transition-[color,border-color,transform] duration-300 hover:rotate-90 hover:border-[#f4f1d670] hover:text-[#f4f1d6]"
+            className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border border-[#f4f1d629] bg-transparent text-[18px] text-[#a9b7a7] transition-[color,border-color,transform,translate,scale,rotate] duration-300 hover:rotate-90 hover:border-[#f4f1d670] hover:text-[#f4f1d6]"
           >
             ×
           </button>

@@ -1,5 +1,5 @@
 import { InquiryLink } from './Inquiry'
-import { Eyebrow, Mark, SectionHead, btn, h3, section } from './ui'
+import { ArrowUpRight, btn, Eyebrow, h3, Highlight, Mark, section, SectionHead } from './ui'
 
 const WHY = [
   ['Content stops being another job on your plate', 'You’re no longer starting every week wondering what to post, what to brief, or what needs to be edited next.'],
@@ -34,7 +34,15 @@ const PROJECTS = [
 export function WhyUs() {
   return (
     <section className={section}>
-      <SectionHead eyebrow="Why work with us" title="You’re not hiring another average video editor. You’re investing in a content team." />
+      <SectionHead
+        eyebrow="Why work with us"
+        title={
+          <>
+            You’re not hiring another average video editor. You’re investing in a{' '}
+            <Highlight data-highlight>content team</Highlight>.
+          </>
+        }
+      />
       <div className="grid grid-cols-3 gap-10 max-[800px]:grid-cols-1 max-[800px]:gap-5">
         {WHY.map(([title, body]) => (
           <article key={title} className="pt-3 relative">
@@ -134,7 +142,7 @@ export function FocusedProjects() {
           </ul>
         </div>
         <InquiryLink topic="Focused project" className={`${btn()} justify-self-end max-[800px]:justify-self-start`}>
-          Discuss a project <span>↗</span>
+          Discuss a project <span><ArrowUpRight /></span>
         </InquiryLink>
       </div>
     </aside>

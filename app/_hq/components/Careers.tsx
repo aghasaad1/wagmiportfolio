@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useRef } from 'react'
 import gsap from 'gsap'
-import { Eyebrow, btn, h2, lockPageScroll, scrollModalToTop } from './ui'
+import { ArrowUpRight, btn, Eyebrow, h2, lockPageScroll, scrollModalToTop } from './ui'
 import { useSendForm } from './useSendForm'
 
 const ROLES = [
@@ -76,7 +76,7 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
             type="button"
             onClick={close}
             aria-label="Close careers"
-            className="absolute right-5 top-5 grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-[#f4f1d629] bg-transparent text-[18px] text-[#a9b7a7] transition-[color,border-color,transform] duration-300 hover:rotate-90 hover:border-[#f4f1d670] hover:text-[#f4f1d6]"
+            className="absolute right-5 top-5 grid h-9 w-9 cursor-pointer place-items-center rounded-full border border-[#f4f1d629] bg-transparent text-[18px] text-[#a9b7a7] transition-[color,border-color,transform,translate,scale,rotate] duration-300 hover:rotate-90 hover:border-[#f4f1d670] hover:text-[#f4f1d6]"
           >
             ×
           </button>
@@ -165,7 +165,7 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
               disabled={state === 'sending'}
               className={`${btn()} col-span-full cursor-pointer disabled:cursor-wait disabled:opacity-60`}
             >
-              {state === 'sending' ? 'Sending…' : 'Send application'} <span>↗</span>
+              {state === 'sending' ? 'Sending…' : 'Send application'} <span><ArrowUpRight /></span>
             </button>
             <p role="status" className={`col-span-full m-0 text-[14px] ${state === 'error' ? 'text-[#e8a99a]' : 'text-[#c5d0ba]'}`}>
               {state === 'sent' && 'Thanks — your application has been sent. We’ll be in touch if there’s a fit.'}

@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useOpenCareers } from './Careers'
-import { Mark, lockPageScroll, scrollModalToTop } from './ui'
+import { ArrowUp, ArrowUpRight, lockPageScroll, Mark, scrollModalToTop } from './ui'
 import PolicyDialog from './PolicyDialog'
 import { POLICIES, type Policy } from './policies'
 
@@ -47,7 +47,7 @@ export default function Footer() {
             className="group inline-flex items-center gap-2 rounded-full border border-[#f4f1d62e] bg-[#f4f1d608] px-4 py-2 text-[14px] font-bold text-[#f4f1d6] transition-[border-color,background-color] duration-300 hover:border-[#f4f1d670] hover:bg-[#f4f1d612]"
           >
             aghasaad@wagmihq.com
-            <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]">↗</span>
+            <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]"><ArrowUpRight /></span>
           </a>
         </div>
         <div data-anim="reveal">
@@ -93,7 +93,7 @@ export default function Footer() {
           style={{ '--gx': 14, '--gy': 6 } as React.CSSProperties}
           className="hq-glass group relative grid h-12 w-12 shrink-0 place-items-center rounded-full text-[16px] text-[#f4f1d6] transition-transform duration-300 hover:scale-110 hover:[--glow:1]"
         >
-          <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[3px]">↑</span>
+          <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[3px]"><ArrowUp /></span>
         </a>
       </div>
 

@@ -118,7 +118,7 @@ function FaqItem({ question, answer }: { question: string; answer: string[] }) {
       >
         <div className="overflow-hidden" inert={!open}>
           <div
-            className={`max-w-[580px] pb-5 text-[15px] text-[#a9b7a7] transition-[opacity,transform] duration-500 ease-out motion-reduce:transition-none ${
+            className={`max-w-[580px] pb-5 text-[15px] text-[#a9b7a7] transition-[opacity,transform,translate,scale,rotate] duration-500 ease-out motion-reduce:transition-none ${
               open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`}
           >

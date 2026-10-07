@@ -1,7 +1,7 @@
 'use client'
 
 import { TOPICS, useInquiry, type Topic } from './Inquiry'
-import { Eyebrow, btn, h2, section } from './ui'
+import { ArrowUpRight, btn, Eyebrow, h2, section } from './ui'
 import { CONTACT_EMAIL, useSendForm } from './useSendForm'
 
 const field = 'flex flex-col gap-[7px]'
@@ -88,7 +88,7 @@ export default function Contact() {
           disabled={state === 'sending'}
           className={`${btn()} col-span-full cursor-pointer disabled:cursor-wait disabled:opacity-60`}
         >
-          {state === 'sending' ? 'Sending…' : 'Request a discovery call'} <span>↗</span>
+          {state === 'sending' ? 'Sending…' : 'Request a discovery call'} <span><ArrowUpRight /></span>
         </button>
         <p role="status" className={`col-span-full m-0 text-[14px] ${state === 'error' ? 'text-[#e8a99a]' : 'text-[#c5d0ba]'}`}>
           {state === 'sent' && 'Thanks — your message has been sent. We’ll get back to you soon.'}

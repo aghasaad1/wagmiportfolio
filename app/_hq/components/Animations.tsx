@@ -6,6 +6,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
+// A phone's address bar showing/hiding resizes the viewport; recalculating every trigger then makes
+// the page jump mid-scroll, so ignore those height-only resizes.
+ScrollTrigger.config({ ignoreMobileResize: true })
 
 const EASE = 'power3.out'
 // Transforms are cleared afterwards so Tailwind hover transforms keep working.
@@ -21,7 +24,6 @@ const shown = { autoAlpha: 1, y: 0, ease: EASE, clearProps: 'transform' }
  *   data-scrub         statement lit word by word with scroll
  *   data-timeline      process timeline (fill + nodes lit with scroll)
  *   data-blob          ambient light behind the glass package cards (slow drift)
- *   data-parallax      review columns drifting at different speeds with scroll
  * hq.css hides the animated elements until GSAP reveals them.
  */
 export default function Animations() {
@@ -44,8 +46,16 @@ export default function Animations() {
           return Math.min(top - window.innerHeight * 0.9, ScrollTrigger.maxScroll(window) - 1)
         },
         once: true,
-        onEnter: (els) =>
-          gsap.fromTo(els, { autoAlpha: 0, y: 28 }, { ...shown, duration: 0.8, stagger: 0.1, overwrite: true }),
+        onEnter: (els) => {
+          gsap.fromTo(els, { autoAlpha: 0, y: 28 }, { ...shown, duration: 0.8, stagger: 0.1, overwrite: true })
+          // Accent highlights inside a revealed block (e.g. "content team") sweep in once it's shown
+          els.forEach((el) => {
+            const hls = el.querySelectorAll('[data-highlight]')
+            if (!hls.length) return
+            gsap.fromTo(el.querySelectorAll('[data-highlight-bg]'), { scaleX: 0 }, { scaleX: 1, duration: 0.7, delay: 0.5, ease: 'power2.inOut' })
+            gsap.fromTo(hls, { color: '#f4f1d6' }, { color: '#0c1814', duration: 0.35, delay: 0.75, ease: 'none' })
+          })
+        },
       })
 
       gsap.utils.toArray<HTMLElement>('[data-anim="line"]').forEach((el) =>
@@ -111,19 +121,6 @@ export default function Animations() {
       })
     })
 
-    // Review columns drift at different speeds while the section scrolls past (desktop only; phones
-    // get a single column revealed card by card). data-parallax = px travelled each way.
-    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 801px)', () => {
-      gsap.utils.toArray<HTMLElement>('[data-parallax]').forEach((el) => {
-        const d = Number(el.dataset.parallax) || 0
-        gsap.fromTo(
-          el,
-          { y: d },
-          { y: -d, ease: 'none', scrollTrigger: { trigger: el.parentElement, start: 'top bottom', end: 'bottom top', scrub: 0.8 } },
-        )
-      })
-    })
-
     // Ambient light behind the glass package cards drifts slowly (desktop only; still on phones),
     // and only runs while the section is on screen.
     mm.add('(prefers-reduced-motion: no-preference) and (min-width: 801px)', () => {
@@ -149,6 +146,26 @@ export default function Animations() {
       })
     })
   })
+
+  // Smooth scrolling for in-page links (#work, #inquiry...). Done here rather than with CSS
+  // scroll-behavior, which would also animate ScrollTrigger's refresh and cause visible jumps (see hq.css).
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+      const link = (e.target as Element).closest?.('a[href^="#"]')
+      const hash = link?.getAttribute('href')
+      if (!hash || hash === '#') return
+      const target = hash === '#top' ? document.body : document.getElementById(hash.slice(1))
+      if (!target) return
+      e.preventDefault()
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      if (hash === '#top') window.scrollTo({ top: 0, behavior })
+      else target.scrollIntoView({ behavior, block: 'start' })
+      history.pushState(null, '', hash)
+    }
+    document.addEventListener('click', onClick)
+    return () => document.removeEventListener('click', onClick)
+  }, [])
 
   // Ease in the contents of any <details> (FAQ, mobile menu) as it opens.
   // `toggle` doesn't bubble, so listen in the capture phase.

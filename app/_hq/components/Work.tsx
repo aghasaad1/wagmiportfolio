@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import Image from 'next/image'
-import { Mark, SectionHead, cardMotion, section } from './ui'
+import { ArrowLeft, ArrowRight, cardMotion, Mark, section, SectionHead } from './ui'
 
 // VSL samples (YouTube IDs), shown in a slider
 const VSLS = ['R0kNKu-I0IM', '8fIWZ6C0bEo', 'VKievNGvRYo', 'SA-3oKS99Ag', '6MCMYCFzA9Q', 'HMzyTo-Q7UI']
@@ -80,7 +80,7 @@ function VslSlider() {
     track.scrollBy({ left: dir * (card.getBoundingClientRect().width + 20), behavior: reduce ? 'auto' : 'smooth' })
   }
   const arrow =
-    'grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-[#f4f1d62e] bg-[#13221a] text-[18px] text-[#f4f1d6] transition-[border-color,background-color,transform] duration-300 hover:-translate-y-0.5 hover:border-[#f4f1d670] hover:bg-[#1b3023]'
+    'grid h-11 w-11 cursor-pointer place-items-center rounded-full border border-[#f4f1d62e] bg-[#13221a] text-[18px] text-[#f4f1d6] transition-[border-color,background-color,transform,translate,scale,rotate] duration-300 hover:-translate-y-0.5 hover:border-[#f4f1d670] hover:bg-[#1b3023]'
 
   return (
     <div>
@@ -106,8 +106,8 @@ function VslSlider() {
         ))}
       </div>
       <div className="mt-3 flex justify-end gap-3">
-        <button type="button" aria-label="Previous VSL" onClick={() => scrollBy(-1)} className={arrow}>←</button>
-        <button type="button" aria-label="Next VSL" onClick={() => scrollBy(1)} className={arrow}>→</button>
+        <button type="button" aria-label="Previous VSL" onClick={() => scrollBy(-1)} className={arrow}><ArrowLeft /></button>
+        <button type="button" aria-label="Next VSL" onClick={() => scrollBy(1)} className={arrow}><ArrowRight /></button>
       </div>
     </div>
   )

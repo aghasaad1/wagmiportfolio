@@ -1,29 +1,30 @@
-import { Eyebrow, Highlight, btn } from './ui'
+import { ArrowDown, ArrowUpRight, btn, Eyebrow, Highlight } from './ui'
 import Vsl from './Vsl'
 
 export default function Hero() {
   return (
     // Fills the screen below the sticky nav (76px desktop / 68px mobile incl. its top margin);
     // the video takes whatever height is left so its caption bar is always in view.
-    // On short screens the text and spacing shrink with the height (dvh) to leave the video room.
-    <div className="flex h-[calc(100dvh-76px)] flex-col pb-[clamp(12px,2.6dvh,24px)] max-[800px]:h-[calc(100dvh-68px)]">
-      <section className="shrink-0 pb-[clamp(14px,3.6dvh,36px)] pt-[clamp(14px,4dvh,40px)] text-center max-[800px]:pt-[clamp(12px,3.4dvh,32px)] max-[800px]:pb-[clamp(12px,3.2dvh,30px)]">
-        <Eyebrow anim="intro" className="mb-[clamp(10px,2.3dvh,23px)]">
+    // On short screens the text and spacing shrink with the height to leave the video room. Sized with svh
+    // (not dvh) so the hero doesn't resize, and shift the whole page, as a phone's address bar shows/hides.
+    <div className="flex h-[calc(100svh-76px)] flex-col pb-[clamp(12px,2.6svh,24px)] max-[800px]:h-[calc(100svh-68px)]">
+      <section className="shrink-0 pb-[clamp(14px,3.6svh,36px)] pt-[clamp(14px,4svh,40px)] text-center max-[800px]:pt-[clamp(12px,3.4svh,32px)] max-[800px]:pb-[clamp(12px,3.2svh,30px)]">
+        <Eyebrow anim="intro" className="mb-[clamp(10px,2.3svh,23px)]">
           For businesses with a proven offer
         </Eyebrow>
-        <h1 data-anim="intro" className="mx-auto mb-[clamp(10px,2.2dvh,22px)] mt-0 text-[clamp(32px,min(5.3vw,7.4dvh),66px)] font-extrabold leading-[1.12] tracking-[-.05em] max-[800px]:max-w-[530px] max-[800px]:text-[clamp(30px,5.6dvh,43px)]">
+        <h1 data-anim="intro" className="mx-auto mb-[clamp(10px,2.2svh,22px)] mt-0 text-[clamp(32px,min(5.3vw,7.4svh),66px)] font-extrabold leading-[1.12] tracking-[-.05em] max-[800px]:max-w-[530px] max-[800px]:text-[clamp(30px,5.6svh,43px)]">
           Your done-for-you <Highlight data-highlight>content funnel</Highlight>.
         </h1>
-        <p data-anim="intro" className="mx-auto mb-[clamp(14px,2.9dvh,29px)] mt-0 max-w-[640px] text-[clamp(15px,2.1dvh,18px)] leading-[1.65] text-[#b8c1b7] max-[800px]:max-w-[490px] max-[800px]:text-[clamp(14px,2dvh,16px)]">
+        <p data-anim="intro" className="mx-auto mb-[clamp(14px,2.9svh,29px)] mt-0 max-w-[640px] text-[clamp(15px,2.1svh,18px)] leading-[1.65] text-[#b8c1b7] max-[800px]:max-w-[490px] max-[800px]:text-[clamp(14px,2svh,16px)]">
           <strong className="font-bold text-[#e3e6cf]">Organic and paid content built to turn attention into clients.</strong>
           <br />
           You run the business. We handle the content.
         </p>
         <a data-anim="intro" className={btn()} href="#inquiry">
-          Request a discovery call <span>↗</span>
+          Request a discovery call <span><ArrowUpRight /></span>
         </a>
-        <a data-anim="intro" className="mt-[clamp(8px,1.3dvh,13px)] block text-[14px] text-[#a9b7a7] max-[800px]:text-[13px]" href="#packages">
-          Explore the three packages ↓
+        <a data-anim="intro" className="mt-[clamp(8px,1.3svh,13px)] block text-[14px] text-[#a9b7a7] max-[800px]:text-[13px]" href="#packages">
+          Explore the three packages <ArrowDown />
         </a>
       </section>
       <div className="flex min-h-0 flex-1 justify-center @container-size">

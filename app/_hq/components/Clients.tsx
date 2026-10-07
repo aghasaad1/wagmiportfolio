@@ -5,7 +5,7 @@ import Image from 'next/image'
 import gsap from 'gsap'
 import { CASE_STUDIES, type CaseStudy } from './caseStudies'
 import { useInquiry } from './Inquiry'
-import { Rich, btn, lockPageScroll, scrollModalToTop } from './ui'
+import { ArrowUpRight, btn, lockPageScroll, Rich, scrollModalToTop, Stars } from './ui'
 
 function Avatar({ c, className }: { c: CaseStudy; className: string }) {
   return (
@@ -39,7 +39,7 @@ function CaseStudyDialog({ dialogRef, study }: { dialogRef: React.RefObject<HTML
             type="button"
             onClick={close}
             aria-label="Close case study"
-            className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border border-[#f4f1d629] bg-transparent text-[18px] text-[#a9b7a7] transition-[color,border-color,transform] duration-300 hover:rotate-90 hover:border-[#f4f1d670] hover:text-[#f4f1d6]"
+            className="grid h-9 w-9 shrink-0 cursor-pointer place-items-center rounded-full border border-[#f4f1d629] bg-transparent text-[18px] text-[#a9b7a7] transition-[color,border-color,transform,translate,scale,rotate] duration-300 hover:rotate-90 hover:border-[#f4f1d670] hover:text-[#f4f1d6]"
           >
             ×
           </button>
@@ -81,10 +81,7 @@ function CaseStudyDialog({ dialogRef, study }: { dialogRef: React.RefObject<HTML
             <section className="mt-9 border-t border-[#f4f1d614] pt-7">
               <h3 className="m-0 text-[17px] font-bold tracking-[-.02em]">{study.quote.heading}</h3>
               <figure className="m-0 mt-4 rounded-[18px] border border-[#f4f1d61f] bg-[#f4f1d608] p-6 max-[800px]:p-5">
-                <div className="flex items-center gap-2">
-                  <span className="text-[16px] tracking-[2px] text-[#f3e38a]" role="img" aria-label="5 out of 5 stars">★★★★★</span>
-                  <span className="text-[13px] font-bold text-[#d9dcc4]">5.0 / 5</span>
-                </div>
+                <Stars label="5.0 / 5" />
                 <blockquote className="m-0 mt-3 text-[16px] leading-[1.7] text-[#dfe3d0]">“{study.quote.text}”</blockquote>
                 <figcaption className="mt-4 text-[14px] font-bold">— {study.quote.author}</figcaption>
               </figure>
@@ -104,7 +101,7 @@ function CaseStudyDialog({ dialogRef, study }: { dialogRef: React.RefObject<HTML
                       className="group inline-flex items-center gap-2 rounded-full border border-[#f4f1d62e] bg-[#f4f1d608] px-4 py-2 text-[14px] font-bold text-[#f4f1d6] transition-[border-color,background-color] duration-300 hover:border-[#f4f1d670] hover:bg-[#f4f1d612]"
                     >
                       {l.label}
-                      <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]">↗</span>
+                      <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]"><ArrowUpRight /></span>
                     </a>
                   </li>
                 ))}
@@ -120,7 +117,7 @@ function CaseStudyDialog({ dialogRef, study }: { dialogRef: React.RefObject<HTML
             }}
             className={`${btn()} mt-10`}
           >
-            Discuss your project <span>↗</span>
+            Discuss your project <span><ArrowUpRight /></span>
           </a>
         </div>
       </div>
@@ -160,12 +157,12 @@ export default function Clients() {
             >
               <Avatar
                 c={c}
-                className="h-[86px] w-[86px] text-[26px] transition-[transform,border-color,background-color,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:border-[#f3e38a90] group-hover:bg-[#213528] group-hover:shadow-[0_0_30px_-8px_#f3e38a60] motion-reduce:transition-none max-[800px]:h-[72px] max-[800px]:w-[72px]"
+                className="h-[86px] w-[86px] text-[26px] transition-[transform,translate,scale,rotate,border-color,background-color,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:border-[#f3e38a90] group-hover:bg-[#213528] group-hover:shadow-[0_0_30px_-8px_#f3e38a60] motion-reduce:transition-none max-[800px]:h-[72px] max-[800px]:w-[72px]"
               />
               <strong className="text-[15px]">{c.name}</strong>
               <small className="text-[14px] text-[#9eafa0]">{c.role}</small>
               <span className="text-[12px] font-bold text-[#c9d2a6] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 max-[800px]:opacity-100">
-                Read case study ↗
+                Read case study <ArrowUpRight />
               </span>
             </button>
           </li>

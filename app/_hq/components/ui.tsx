@@ -1,10 +1,13 @@
+import { LuArrowDown, LuArrowLeft, LuArrowRight, LuArrowUp, LuArrowUpRight } from 'react-icons/lu'
+import { RiStarFill } from 'react-icons/ri'
+
 // Size classes are kept apart from the look so callers can swap them without
 // two conflicting utilities (Tailwind picks by stylesheet order, not class order).
 const btnSizeDefault = 'gap-[22px] rounded-[12px] px-5 py-[13px] text-[14px]'
 
-// Lift on hover, press on click, and the ↗ arrow (the <span>) nudges toward its direction
+// Lift on hover, press on click, and the arrow icon (in the <span>) nudges toward its direction
 const btnMotion =
-  'transition-[transform,background-color,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 [&>span]:inline-block [&>span]:transition-transform [&>span]:duration-300 hover:[&>span]:translate-x-[3px] hover:[&>span]:-translate-y-[3px]'
+  'transition-[transform,translate,scale,rotate,background-color,border-color,box-shadow] duration-300 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[.98] motion-reduce:transition-none motion-reduce:hover:translate-y-0 [&>span]:inline-block [&>span]:transition-transform [&>span]:duration-300 hover:[&>span]:translate-x-[3px] hover:[&>span]:-translate-y-[3px]'
 
 export const btn = (size = btnSizeDefault) =>
   `inline-flex items-center justify-center border font-bold border-[#f4f1d6] bg-[#f4f1d6] text-[#0c1814] hover:bg-[#fffbe3] hover:shadow-[0_10px_28px_-12px_#f4f1d680] ${btnMotion} ${size}`
@@ -13,7 +16,7 @@ export const btnGhost = (size = btnSizeDefault) =>
 
 // Cards lift slightly and their border brightens on hover
 export const cardMotion =
-  'transition-[transform,border-color,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_22px_45px_-24px_#000] motion-reduce:transition-none motion-reduce:hover:translate-y-0'
+  'transition-[transform,translate,scale,rotate,border-color,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_22px_45px_-24px_#000] motion-reduce:transition-none motion-reduce:hover:translate-y-0'
 
 export const h2 = 'm-0 text-[clamp(29px,3.5vw,43px)] font-bold leading-[1.15] tracking-[-.045em]'
 export const h3 = 'font-bold leading-[1.25] tracking-[-.025em]'
@@ -41,7 +44,7 @@ export function Eyebrow({ className = 'mb-[23px]', anim, children }: { className
   )
 }
 
-export function SectionHead({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
+export function SectionHead({ eyebrow, title, sub }: { eyebrow: string; title: React.ReactNode; sub?: string }) {
   return (
     <div className="mb-[30px] flex items-end justify-between gap-5 max-[800px]:flex-wrap max-[800px]:items-start">
       <div data-anim="reveal">
@@ -93,6 +96,28 @@ export function scrollModalToTop(dialog: HTMLDialogElement) {
   const reset = () => dialog.querySelectorAll<HTMLElement>('[data-modal-scroll]').forEach((el) => (el.scrollTop = 0))
   reset()
   requestAnimationFrame(reset)
+}
+
+// Arrow icons as SVG (the ↗ text glyph renders as an emoji on iPhone). Sized to the surrounding text.
+const iconClass = 'inline-block h-[1em] w-[1em] shrink-0 align-[-0.125em]'
+export const ArrowUpRight = () => <LuArrowUpRight aria-hidden="true" className={iconClass} />
+export const ArrowUp = () => <LuArrowUp aria-hidden="true" className={iconClass} />
+export const ArrowDown = () => <LuArrowDown aria-hidden="true" className={iconClass} />
+export const ArrowLeft = () => <LuArrowLeft aria-hidden="true" className={iconClass} />
+export const ArrowRight = () => <LuArrowRight aria-hidden="true" className={iconClass} />
+
+// Five filled stars in the accent yellow, with the score beside them (reviews, case studies)
+export function Stars({ label = '5.0' }: { label?: string }) {
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="flex gap-[2px] text-[15px] text-[#f3e38a] drop-shadow-[0_0_6px_#f3e38a40]" role="img" aria-label="Rated 5 out of 5">
+        {Array.from({ length: 5 }, (_, i) => (
+          <RiStarFill key={i} aria-hidden="true" />
+        ))}
+      </span>
+      <span className="text-[12px] font-bold text-[#d9dcc4]">{label}</span>
+    </span>
+  )
 }
 
 // Stops the page behind an open modal from scrolling

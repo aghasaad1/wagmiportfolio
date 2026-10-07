@@ -4,14 +4,15 @@
  * base rules in app/globals.css that would otherwise beat Tailwind utilities.
  */
 
+/*
+ * No CSS scroll-behavior: smooth here: it animates ScrollTrigger's refresh (which briefly jumps the
+ * page to the top and back), showing up as a scroll glitch. In-page links scroll smoothly via JS in
+ * components/Animations.tsx instead. scrollbar-gutter keeps the layout still when a modal hides the scrollbar.
+ */
 html.hq {
   font-size: 16px;
-  scroll-behavior: smooth;
   scroll-padding-top: 100px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.hq { scroll-behavior: auto; }
+  scrollbar-gutter: stable;
 }
 
 /* globals.css has an unlayered `* { margin:0; padding:0 }` — hand spacing back to Tailwind. */
