@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { ArrowLeft, ArrowRight, Mark, section, SectionHead } from './ui'
 import { useDragScroll } from './useDragScroll'
 import { COPIES, useLoopCarousel } from './useLoopCarousel'
+import { claimPlayback, pausePlayback, releasePlayback } from './playback'
 import VideoPlayer from './VideoPlayer'
 
 /*
@@ -83,7 +84,7 @@ const thumbnail = (source: Source, id: string, shape: Shape) =>
 
 const embed = (source: Source, id: string) =>
   source === 'youtube'
-    ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`
+    ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`
     : `https://drive.google.com/file/d/${id}/preview`
 
 // The video file itself: our own MP4, or Drive's direct download URL (it serves video/mp4 with byte
@@ -91,16 +92,65 @@ const embed = (source: Source, id: string) =>
 const stream = (source: Source, id: string) =>
   source === 'file' ? `/hq/work/${id}.mp4` : `https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t`
 
-// Shows only the thumbnail until played, so a page of embeds doesn't load up front. The slider owns
-// `playing`, so it can stop a video that has been swiped away.
-function LiteVideo({ source, id, shape, title, playing, onPlay }: { source: Source; id: string; shape: Shape; title: string; playing: boolean; onPlay: () => void }) {
+// A YouTube embed that takes part in one-video-at-a-time (see playback.ts): it reports when it starts
+// playing through YouTube's iframe messages, and is paused with a pauseVideo command
+function YouTubeEmbed({ id, title }: { id: string; title: string }) {
+  const frameRef = useRef<HTMLIFrameElement>(null)
+
+  useEffect(() => {
+    const frame = frameRef.current
+    if (!frame) return
+    const send = (msg: object) => frame.contentWindow?.postMessage(JSON.stringify(msg), '*')
+    const pause = () => send({ event: 'command', func: 'pauseVideo', args: [] })
+    // Ask the player to post its state changes back to us
+    const listen = () => send({ event: 'listening', id, channel: 'widget' })
+    let state: number | undefined
+    const onMessage = (e: MessageEvent) => {
+      if (e.source !== frame.contentWindow || typeof e.data !== 'string') return
+      let data
+      try {
+        data = JSON.parse(e.data)
+      } catch {
+        return
+      }
+      const next = data.event === 'onStateChange' ? data.info : data.info?.playerState
+      if (typeof next !== 'number' || next === state) return
+      state = next
+      if (state === 1) claimPlayback(pause) // 1 = playing
+    }
+    window.addEventListener('message', onMessage)
+    frame.addEventListener('load', listen)
+    return () => {
+      window.removeEventListener('message', onMessage)
+      frame.removeEventListener('load', listen)
+      releasePlayback(pause)
+    }
+  }, [id])
+
+  return (
+    <iframe
+      ref={frameRef}
+      src={`${embed('youtube', id)}&origin=${encodeURIComponent(window.location.origin)}`}
+      title={title}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowFullScreen
+      className="absolute inset-0 h-full w-full border-0"
+    />
+  )
+}
+
+// Shows only the thumbnail until opened, so a page of embeds doesn't load up front. Once opened the
+// player stays mounted, so a video paused by another one starting resumes where it left off.
+function LiteVideo({ source, id, shape, title, open, onPlay }: { source: Source; id: string; shape: Shape; title: string; open: boolean; onPlay: () => void }) {
   // If Drive refuses the direct stream (e.g. its download quota), fall back to its embedded player
   const [fallback, setFallback] = useState(false)
   return (
     <div className={`relative overflow-hidden bg-[#0c1814] ${shape === 'tall' ? 'aspect-[9/16]' : 'aspect-video'}`}>
-      {playing && source !== 'youtube' && !fallback ? (
+      {open && source === 'youtube' ? (
+        <YouTubeEmbed id={id} title={title} />
+      ) : open && !fallback ? (
         <VideoPlayer src={stream(source, id)} poster={thumbnail(source, id, shape)} title={title} onError={() => source === 'drive' && setFallback(true)} />
-      ) : playing ? (
+      ) : open ? (
         <iframe
           src={embed(source, id)}
           title={title}
@@ -150,15 +200,16 @@ function VideoSlider({ c }: { c: Collection }) {
   const n = c.videos.length
   const { centred, looping, goTo } = useLoopCarousel(trackRef, n)
 
-  // Index (across all copies) of the video that's playing. Moving to another video stops it.
-  const [playing, setPlaying] = useState<number | null>(null)
-  const [lastCentred, setLastCentred] = useState(centred % n)
-  if (centred % n !== lastCentred) {
-    setLastCentred(centred % n)
-    if (looping) setPlaying(null)
-  }
+  // Indexes (across all copies) of the videos opened so far. They stay open, paused, when another
+  // video starts, so each resumes where it left off.
+  const [opened, setOpened] = useState<ReadonlySet<number>>(() => new Set())
+  // Mobile and tablet: swiping to another video pauses the one playing
+  const centredVideo = centred % n
+  useEffect(() => {
+    if (looping) pausePlayback()
+  }, [centredVideo, looping])
   // On mobile and tablet a tap on a side card brings it to the middle; a tap on the centred one plays it
-  const play = (i: number) => (looping && i !== centred ? goTo(i) : setPlaying(i))
+  const play = (i: number) => (looping && i !== centred ? goTo(i) : setOpened((s) => new Set(s).add(i)))
 
   // Only show the arrows when there's something to scroll to
   useEffect(() => {
@@ -210,7 +261,7 @@ function VideoSlider({ c }: { c: Collection }) {
                   clone ? 'hidden max-[1000px]:block' : ''
                 } ${k === centred ? '' : 'max-[1000px]:scale-[.9] max-[1000px]:opacity-50!'}`}
               >
-                <LiteVideo source={c.source} id={id} shape={c.shape} title={title} playing={playing === k} onPlay={() => play(k)} />
+                <LiteVideo source={c.source} id={id} shape={c.shape} title={title} open={opened.has(k)} onPlay={() => play(k)} />
                 {/* Only named collections (the VSLs) get a caption; the rest show just the video */}
                 {c.titles && <div className="px-5 py-4 text-[14px] font-bold max-[800px]:px-4 max-[800px]:py-3">{title}</div>}
               </article>
@@ -247,6 +298,11 @@ function Collections({ tabId, collections }: { tabId: string; collections: Colle
   const refs = useRef<(HTMLButtonElement | null)[]>([])
   const panelRef = useRef<HTMLDivElement>(null)
   const first = useRef(true)
+  // Switching format pauses whatever is playing
+  const select = (i: number) => {
+    pausePlayback()
+    setActive(i)
+  }
 
   useGSAP(
     () => {
@@ -276,12 +332,12 @@ function Collections({ tabId, collections }: { tabId: string; collections: Colle
               aria-selected={on}
               aria-controls={`sub-${c.id}`}
               tabIndex={on ? 0 : -1}
-              onClick={() => setActive(i)}
+              onClick={() => select(i)}
               onKeyDown={(e) => {
                 const next = keyTarget(e.key, i, collections.length)
                 if (next === null) return
                 e.preventDefault()
-                setActive(next)
+                select(next)
                 refs.current[next]?.focus()
               }}
               className={`cursor-pointer rounded-full px-4 py-[7px] text-[13px] font-bold transition-colors duration-300 ${
@@ -307,6 +363,11 @@ export default function Work() {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const panelsRef = useRef<HTMLDivElement>(null)
   const firstRender = useRef(true)
+  // Switching tab pauses whatever is playing
+  const select = (i: number) => {
+    pausePlayback()
+    setActive(i)
+  }
 
   // Stagger the newly shown cards in on tab change (the initial reveal is handled by Animations)
   useGSAP(
@@ -339,12 +400,12 @@ export default function Work() {
             aria-selected={i === active}
             aria-controls={`panel-${t.id}`}
             tabIndex={i === active ? 0 : -1}
-            onClick={() => setActive(i)}
+            onClick={() => select(i)}
             onKeyDown={(e) => {
               const next = keyTarget(e.key, i, TABS.length)
               if (next === null) return
               e.preventDefault()
-              setActive(next)
+              select(next)
               tabRefs.current[next]?.focus()
             }}
             className={tabClass(i === active)}

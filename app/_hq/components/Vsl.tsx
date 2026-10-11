@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
+import { claimPlayback, releasePlayback } from './playback'
 import { Mark } from './ui'
 
 // WAGMI intro (youtu.be/x1hFVlqxCgM, temporary cut), self-hosted so no YouTube player UI shows
@@ -11,17 +12,25 @@ const POSTER_SRC = '/hq/intro-poster.jpg' // the video's YouTube thumbnail
 // Shows a thumbnail with the WAGMI mark as the play button; the video only downloads once clicked.
 export default function Vsl() {
   const [playing, setPlaying] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  // Starting the intro pauses any other video on the page (see playback.ts)
+  const pauseSelf = useCallback(() => {
+    videoRef.current?.pause()
+  }, [])
+  useEffect(() => () => releasePlayback(pauseSelf), [pauseSelf])
 
   return (
     <div data-anim="intro" className="relative mx-auto w-[min(100cqw,880px,calc((100cqh_-_60px)*16/9))] self-start overflow-hidden max-[800px]:w-[min(100cqw,calc((100cqh_-_47px)*16/9))] rounded-[25px] border border-[#f4f1d625] bg-[#14261e]">
       <div className="relative aspect-video">
         {playing ? (
           <video
+            ref={videoRef}
             src={VIDEO_SRC}
             poster={POSTER_SRC}
             autoPlay
             controls
             playsInline
+            onPlay={() => claimPlayback(pauseSelf)}
             className="absolute inset-0 h-full w-full bg-black object-contain"
           />
         ) : (

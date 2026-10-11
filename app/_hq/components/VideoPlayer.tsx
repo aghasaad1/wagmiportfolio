@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { RiFullscreenExitLine, RiFullscreenLine, RiPauseFill, RiPlayFill, RiVolumeDownFill, RiVolumeMuteFill, RiVolumeUpFill } from 'react-icons/ri'
+import { claimPlayback, releasePlayback } from './playback'
 
 const clock = (s: number) => {
   if (!Number.isFinite(s)) return '0:00'
@@ -61,6 +62,12 @@ export default function VideoPlayer({ src, poster, title, onError }: { src: stri
       clearTimeout(idleTimer.current)
     }
   }, [])
+
+  // Starting this video pauses any other on the page (see playback.ts)
+  const pauseSelf = useCallback(() => {
+    videoRef.current?.pause()
+  }, [])
+  useEffect(() => () => releasePlayback(pauseSelf), [pauseSelf])
 
   const hidden = idle && !paused && !scrubbing
 
@@ -152,6 +159,7 @@ export default function VideoPlayer({ src, poster, title, onError }: { src: stri
           toggle()
         }}
         onPlay={() => {
+          claimPlayback(pauseSelf)
           setPaused(false)
           wake()
         }}
