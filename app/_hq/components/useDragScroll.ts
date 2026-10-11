@@ -18,7 +18,8 @@ export function useDragScroll(ref: React.RefObject<HTMLElement | null>) {
     let moved = false
 
     const down = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return
+      // Elements marked data-no-drag (e.g. a video player's seek bar) keep the pointer to themselves
+      if (e.pointerType !== 'mouse' || e.button !== 0 || (e.target as Element).closest('[data-no-drag]')) return
       dragging = true
       moved = false
       startX = e.clientX

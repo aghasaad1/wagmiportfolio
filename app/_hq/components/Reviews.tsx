@@ -44,7 +44,7 @@ function ReviewCard({ r, active, onSelect }: { r: Review; active: boolean; onSel
           instead of growing the card, so the row stays even */}
       <blockquote
         className={`m-0 mt-4 h-[8.25em] text-[15px] leading-[1.65] text-[#e7eadb] ${
-          open ? 'overflow-y-auto overscroll-contain pr-2 [scrollbar-width:thin]' : 'line-clamp-5'
+          open ? 'overflow-y-auto overscroll-contain' : 'line-clamp-5'
         }`}
       >
         “{r.quote}”
@@ -186,7 +186,7 @@ export default function Reviews() {
           }}
           // --card: three on screen on desktop, two-ish on tablets, one with neighbours peeking on phones.
           // The side padding lets the first and last card reach the centre.
-          className="flex cursor-grab snap-x snap-mandatory items-stretch gap-5 overflow-x-auto overscroll-x-contain scroll-smooth py-8 [--card:min(400px,calc((100cqw-104px)/3))] [padding-inline:calc(50cqw-var(--card)/2)] [scrollbar-width:none] max-[1000px]:[--card:min(400px,46cqw)] max-[800px]:gap-3 max-[800px]:py-4 max-[800px]:[--card:76cqw] motion-reduce:scroll-auto [&::-webkit-scrollbar]:hidden"
+          className="flex cursor-grab snap-x snap-mandatory items-stretch gap-5 overflow-x-auto overscroll-x-contain scroll-smooth py-8 [--card:min(400px,calc((100cqw-104px)/3))] [padding-inline:calc(50cqw-var(--card)/2)] max-[1000px]:[--card:min(400px,46cqw)] max-[800px]:gap-3 max-[800px]:py-4 max-[800px]:[--card:76cqw] motion-reduce:scroll-auto"
         >
           {REVIEWS.map((r, i) => (
             <ReviewCard key={r.name} r={r} active={i === active} onSelect={() => goTo(i)} />

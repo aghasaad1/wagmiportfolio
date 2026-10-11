@@ -26,6 +26,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'brandon-clark',
     initials: 'BC',
+    photo: '/hq/clients/avatar-brandon.jpg',
     name: 'Brandon Clark',
     role: 'Retirement education',
     title: 'Brandon Clark',
@@ -71,6 +72,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'timeless-protection',
     initials: 'TP',
+    photo: '/hq/clients/avatar-michael.jpg',
     name: 'Timeless Protection',
     role: 'Content operations',
     title: 'Michael DeCecco · Timeless Protection',
@@ -122,6 +124,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'jonathan-catliff',
     initials: 'JC',
+    photo: '/hq/clients/avatar-jonathan.jpg',
     name: 'Jonathan Catliff',
     role: 'Content + community',
     title: 'Jonathan Catliff · Automatable',
@@ -159,6 +162,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'marketing-against-the-grain',
     initials: 'HL',
+    photo: '/hq/clients/avatar-hubert.jpg',
     name: 'Hubert Lamela',
     role: 'Marketing Against The Grain',
     title: 'Hubert Lamela · Marketing Against The Grain',
@@ -191,6 +195,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'ask-the-advocate',
     initials: 'MB',
+    photo: '/hq/clients/avatar-maureen.jpg',
     name: 'Maureen Brown',
     role: 'Ask The Advocate',
     title: 'Maureen Brown · Ask The Advocate',
@@ -226,6 +231,7 @@ export const CASE_STUDIES: CaseStudy[] = [
   {
     id: 'epic-real-estate',
     initials: 'MT',
+    photo: '/hq/clients/avatar-matt.jpg',
     name: 'Matt Theriault',
     role: 'Epic Real Estate',
     title: 'Matt Theriault · Epic Real Estate',

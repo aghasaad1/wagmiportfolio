@@ -6,6 +6,7 @@ import gsap from 'gsap'
 import { CASE_STUDIES, type CaseStudy } from './caseStudies'
 import { useInquiry } from './Inquiry'
 import { ArrowUpRight, btn, lockPageScroll, Rich, scrollModalToTop, Stars } from './ui'
+import { COPIES, useLoopCarousel } from './useLoopCarousel'
 
 function Avatar({ c, className }: { c: CaseStudy; className: string }) {
   return (
@@ -125,9 +126,14 @@ function CaseStudyDialog({ dialogRef, study }: { dialogRef: React.RefObject<HTML
   )
 }
 
+const N = CASE_STUDIES.length
+
 export default function Clients() {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const trackRef = useRef<HTMLUListElement>(null)
   const [active, setActive] = useState(CASE_STUDIES[0])
+  // Mobile and tablet: an endless row with one client centred (see useLoopCarousel)
+  const { centred } = useLoopCarousel(trackRef, N)
 
   const open = (study: CaseStudy) => {
     setActive(study)
@@ -146,28 +152,52 @@ export default function Clients() {
       <h2 data-anim="reveal" id="clients-title" className="mb-8 mt-0 text-center text-[24px] font-bold leading-[1.15] tracking-[-.045em]">
         A few of the people we’ve worked with.
       </h2>
-      <ul className="m-0 flex list-none flex-wrap justify-center gap-x-[52px] gap-y-8 p-0 max-[800px]:flex-nowrap max-[800px]:justify-start max-[800px]:gap-[26px] max-[800px]:overflow-x-auto max-[800px]:pb-[14px]">
-        {CASE_STUDIES.map((c) => (
-          <li key={c.id} data-anim="reveal" className="max-w-[160px] max-[800px]:min-w-[130px] max-[800px]:flex-1">
-            <button
-              type="button"
-              onClick={() => open(c)}
-              aria-label={`Read the ${c.name} case study`}
-              className="group flex w-full cursor-pointer flex-col items-center gap-[10px] bg-transparent text-center text-[#f4f1d6]"
-            >
-              <Avatar
-                c={c}
-                className="h-[86px] w-[86px] text-[26px] transition-[transform,translate,scale,rotate,border-color,background-color,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:border-[#f3e38a90] group-hover:bg-[#213528] group-hover:shadow-[0_0_30px_-8px_#f3e38a60] motion-reduce:transition-none max-[800px]:h-[72px] max-[800px]:w-[72px]"
-              />
-              <strong className="text-[15px]">{c.name}</strong>
-              <small className="text-[14px] text-[#9eafa0]">{c.role}</small>
-              <span className="text-[12px] font-bold text-[#c9d2a6] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 max-[800px]:opacity-100">
-                Read case study <ArrowUpRight />
-              </span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* Desktop: one centred, wrapping row. Mobile and tablet: a size container, so the card width and
+          the padding that lets each card reach the middle come from the visible width (cqw) */}
+      <div className="max-[1000px]:-mx-8 max-[1000px]:@container max-[800px]:-mx-5">
+        <ul
+          ref={trackRef}
+          className="relative m-0 flex list-none flex-wrap justify-center gap-x-[52px] gap-y-8 p-0 max-[1000px]:snap-x max-[1000px]:snap-mandatory max-[1000px]:flex-nowrap max-[1000px]:justify-start max-[1000px]:gap-0 max-[1000px]:overflow-x-auto max-[1000px]:overscroll-x-contain max-[1000px]:py-2 max-[1000px]:[--w:34cqw] max-[1000px]:[padding-inline:calc(50cqw-var(--w)/2)] max-[800px]:[--w:56cqw]"
+        >
+          {COPIES.flatMap((copy) =>
+            CASE_STUDIES.map((c, i) => {
+              // The first and last copies only exist for the endless scroll, so they're hidden on
+              // desktop and from assistive tech
+              const clone = copy !== 1
+              // Side cards shrink and dim (opacity is !important: the reveal animation leaves an inline opacity)
+              return (
+                <li
+                  key={`${copy}-${c.id}`}
+                  data-loop-item
+                  data-anim={clone ? undefined : 'reveal'}
+                  aria-hidden={clone || undefined}
+                  className={`max-w-[160px] max-[1000px]:w-[var(--w)] max-[1000px]:max-w-none max-[1000px]:shrink-0 max-[1000px]:snap-center max-[1000px]:transition-[scale,opacity] max-[1000px]:duration-500 max-[1000px]:ease-[cubic-bezier(.22,1,.36,1)] motion-reduce:transition-none ${
+                    clone ? 'hidden max-[1000px]:block' : ''
+                  } ${copy * N + i === centred ? '' : 'max-[1000px]:scale-[.82] max-[1000px]:opacity-50!'}`}
+                >
+                  <button
+                    type="button"
+                    tabIndex={clone ? -1 : undefined}
+                    onClick={() => open(c)}
+                    aria-label={`Read the ${c.name} case study`}
+                    className="group flex w-full cursor-pointer flex-col items-center gap-[10px] bg-transparent text-center text-[#f4f1d6]"
+                  >
+                    <Avatar
+                      c={c}
+                      className="h-[86px] w-[86px] text-[26px] transition-[transform,translate,scale,rotate,border-color,background-color,box-shadow] duration-300 ease-out group-hover:scale-105 group-hover:border-[#f3e38a90] group-hover:bg-[#213528] group-hover:shadow-[0_0_30px_-8px_#f3e38a60] motion-reduce:transition-none max-[800px]:h-[80px] max-[800px]:w-[80px]"
+                    />
+                    <strong className="text-[15px]">{c.name}</strong>
+                    <small className="text-[14px] text-[#9eafa0]">{c.role}</small>
+                    <span className="text-[12px] font-bold text-[#c9d2a6] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 max-[1000px]:opacity-100">
+                      Read case study <ArrowUpRight />
+                    </span>
+                  </button>
+                </li>
+              )
+            }),
+          )}
+        </ul>
+      </div>
 
       <CaseStudyDialog dialogRef={dialogRef} study={active} />
     </section>

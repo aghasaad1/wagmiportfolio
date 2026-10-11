@@ -17,6 +17,13 @@ const nextConfig = {
         port: '',
         pathname: '/vi/**',
       },
+      // Google Drive video thumbnails for the HQ work samples
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '/d/**',
+      },
     ],
     formats: ['image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],

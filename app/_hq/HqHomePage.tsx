@@ -12,6 +12,7 @@ import Footer from './components/Footer'
 import { InquiryProvider } from './components/Inquiry'
 import { CareersProvider } from './components/Careers'
 import Animations from './components/Animations'
+import LiquidCursor from './components/LiquidCursor'
 import { GlassDefs } from './components/Glass'
 
 // WAGMI HQ LLC single-page site, ported from the /chatgpt HTML prototype.
@@ -20,6 +21,7 @@ export default function HqHomePage() {
     <InquiryProvider>
       <CareersProvider>
         <Animations />
+        <LiquidCursor />
         <GlassDefs />
         <div aria-hidden="true" className="hq-aurora" />
         <Nav />

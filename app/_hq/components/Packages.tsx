@@ -112,7 +112,7 @@ export default function Packages() {
         {/* Three columns on desktop; below 1000px a swipeable row (cards keep their full width instead of stacking) */}
         <SwipeRow
           aria-label="Packages"
-          className="relative grid grid-cols-3 items-stretch gap-4 max-[1000px]:-mx-8 max-[1000px]:flex max-[1000px]:snap-x max-[1000px]:snap-mandatory max-[1000px]:scroll-px-8 max-[1000px]:overflow-x-auto max-[1000px]:overscroll-x-contain max-[1000px]:px-8 max-[1000px]:py-4 max-[1000px]:[scrollbar-width:none] max-[800px]:-mx-5 max-[800px]:scroll-px-5 max-[800px]:px-5 [&::-webkit-scrollbar]:hidden"
+          className="relative grid grid-cols-3 items-stretch gap-4 max-[1000px]:-mx-8 max-[1000px]:flex max-[1000px]:snap-x max-[1000px]:snap-mandatory max-[1000px]:scroll-px-8 max-[1000px]:overflow-x-auto max-[1000px]:overscroll-x-contain max-[1000px]:px-8 max-[1000px]:py-4 max-[800px]:-mx-5 max-[800px]:scroll-px-5 max-[800px]:px-5"
         >
           {PACKAGES.map((p, i) => {
             const tier = TIERS[i]

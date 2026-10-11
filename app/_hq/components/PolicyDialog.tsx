@@ -59,7 +59,7 @@ export default function PolicyDialog({
       <div className="flex h-full flex-col">
         {/* Header: tabs + close */}
         <div className="flex items-center justify-between gap-4 border-b border-[#f4f1d61c] px-7 py-4 max-[800px]:px-5">
-          <div role="tablist" aria-label="Policies" className="flex min-w-0 gap-1 overflow-x-auto rounded-full border border-[#f4f1d61f] p-1 [scrollbar-width:none]">
+          <div role="tablist" aria-label="Policies" className="flex min-w-0 gap-1 overflow-x-auto rounded-full border border-[#f4f1d61f] p-1">
             {POLICIES.map((p) => {
               const on = p.id === active
               return (
