@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useOpenCareers } from './Careers'
-import { ArrowUp, ArrowUpRight, lockPageScroll, Mark, scrollModalToTop } from './ui'
+import { ArrowUpRight, lockPageScroll, Mark, scrollModalToTop } from './ui'
 import PolicyDialog from './PolicyDialog'
 import { POLICIES, type Policy } from './policies'
 
@@ -85,23 +85,20 @@ export default function Footer() {
         </div>
       </div>
 
-      <div data-anim="reveal" className="mt-14 flex items-center justify-between gap-5 border-t border-[#f4f1d61c] pt-6 text-[13px] text-[#a9b7a7] max-[800px]:mt-10">
+      <div data-anim="reveal" className="mt-14 flex items-center gap-5 border-t border-[#f4f1d61c] pt-6 text-[13px] text-[#a9b7a7] max-[800px]:mt-10">
         <span>© 2026 WAGMI HQ LLC. All rights reserved.</span>
-        <a
-          href="#top"
-          aria-label="Back to top"
-          style={{ '--gx': 14, '--gy': 6 } as React.CSSProperties}
-          className="hq-glass group relative grid h-12 w-12 shrink-0 place-items-center rounded-full text-[16px] text-[#f4f1d6] transition-transform duration-300 hover:scale-110 hover:[--glow:1]"
-        >
-          <span className="inline-block transition-transform duration-300 group-hover:-translate-y-[3px]"><ArrowUp /></span>
-        </a>
       </div>
 
-      {/* Oversized wordmark, cropped at the page edge */}
+      {/* Oversized wordmark, cropped at the page edge.
+          The drop is a negative bottom margin, not translate-y: the reveal
+          animation drives `transform` and then clears it, while Tailwind's
+          translate utilities set the separate `translate` property, so the two
+          composed and the wordmark shifted after the reveal settled.
+          .144em == the old translate-y-[18%] of this 0.8em-tall line box. */}
       <div aria-hidden="true" className="mt-6 overflow-hidden">
         <div
           data-anim="reveal"
-          className="translate-y-[18%] select-none text-center text-[clamp(96px,24.5vw,318px)] font-extrabold leading-[.8] tracking-[-.07em] text-transparent [background-clip:text] bg-[linear-gradient(180deg,#f4f1d62e_10%,#f4f1d605_85%)]"
+          className="-mb-[.144em] select-none text-center text-[clamp(96px,24.5vw,318px)] font-extrabold leading-[.8] tracking-[-.07em] text-transparent [background-clip:text] bg-[linear-gradient(180deg,#f4f1d62e_10%,#f4f1d605_85%)]"
         >
           WAGMI
         </div>

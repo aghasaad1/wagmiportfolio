@@ -39,6 +39,7 @@ export default function Vsl() {
             onClick={() => setPlaying(true)}
             className="group absolute inset-0 h-full w-full cursor-pointer"
           >
+            {/* Decorative: the wrapping button carries the descriptive aria-label above. */}
             <Image src={POSTER_SRC} alt="" fill sizes="(max-width: 880px) 100vw, 880px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] motion-reduce:transition-none" priority />
             <span className="absolute inset-0 bg-[#0c1814]/20 transition-colors group-hover:bg-[#0c1814]/5" />
             {/* Liquid Glass disc with the WAGMI mark as the play button */}

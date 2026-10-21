@@ -162,6 +162,8 @@ function LiteVideo({ source, id, shape, title, open, onPlay }: { source: Source;
         <button type="button" aria-label={`Play ${title}`} onClick={onPlay} className="group absolute inset-0 h-full w-full cursor-pointer">
           <Image
             src={thumbnail(source, id, shape)}
+            // Decorative: the wrapping button is already labelled `Play ${title}`,
+            // so describing the thumbnail here would be announced twice.
             alt=""
             fill
             sizes={shape === 'tall' ? '(max-width: 800px) 62vw, (max-width: 1000px) 40vw, 300px' : '(max-width: 800px) 84vw, (max-width: 1000px) 64vw, 480px'}

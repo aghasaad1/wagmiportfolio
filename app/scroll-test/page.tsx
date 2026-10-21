@@ -1,4 +1,10 @@
+import type { Metadata } from 'next'
 import SceneClient from './SceneClient'
+
+// Sandbox page: never index it, whichever design is live.
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 // SANDBOX PAGE — isolated test for scroll-driven 3D animation setup.
 // Not linked from nav; visit /scroll-test directly.

@@ -1,8 +1,8 @@
 'use client'
 
-import { createContext, useCallback, useContext, useRef } from 'react'
+import { createContext, useCallback, useContext, useRef, useState } from 'react'
 import gsap from 'gsap'
-import { ArrowUpRight, btn, Eyebrow, h2, lockPageScroll, scrollModalToTop } from './ui'
+import { ArrowUpRight, btn, btnGhost, Eyebrow, h2, lockPageScroll, scrollModalToTop } from './ui'
 import { useSendForm } from './useSendForm'
 
 const ROLES = [
@@ -32,12 +32,40 @@ const input =
 
 export function CareersProvider({ children }: { children: React.ReactNode }) {
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
   const { state, error, send, reset } = useSendForm('careers')
+
+  // True once the applicant has typed something that would be lost on close.
+  // Selects are ignored: they always carry a value, so they'd report "dirty"
+  // on an untouched form. A sent application has nothing left to lose.
+  const isDirty = useCallback(() => {
+    const form = formRef.current
+    if (!form || state === 'sent') return false
+    return ['name', 'email', 'location', 'portfolio', 'message', 'experience'].some((n) => {
+      const el = form.elements.namedItem(n)
+      return el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement ? el.value.trim() !== '' : false
+    })
+  }, [state])
+
+  // Shows the in-dialog "discard?" overlay instead of a browser confirm box.
+  const [confirming, setConfirming] = useState(false)
+
+  // Every dismissal route goes through here: the × button, a backdrop click and
+  // Esc (which closes a <dialog> natively, so it's intercepted in onCancel below).
+  // Returns false when the applicant has unsaved input, raising the overlay
+  // rather than closing; the overlay's own buttons then decide.
+  const requestClose = useCallback(() => {
+    if (!isDirty()) return true
+    setConfirming(true)
+    return false
+  }, [isDirty])
 
   const open = useCallback(() => {
     const dialog = dialogRef.current
     if (!dialog || dialog.open) return
     reset()
+    setConfirming(false)
+    formRef.current?.reset()
     dialog.showModal()
     scrollModalToTop(dialog)
     lockPageScroll(true)
@@ -51,7 +79,15 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
     }
   }, [reset])
 
-  const close = () => dialogRef.current?.close()
+  const close = () => {
+    if (requestClose()) dialogRef.current?.close()
+  }
+
+  // Confirmed from the overlay: close for real.
+  const discard = () => {
+    setConfirming(false)
+    dialogRef.current?.close()
+  }
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -65,11 +101,28 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
       <dialog
         ref={dialogRef}
         aria-labelledby="careers-title"
-        onClose={() => lockPageScroll(false)}
+        onClose={() => {
+          lockPageScroll(false)
+          setConfirming(false)
+          // Leave no half-finished application behind for the next time it opens.
+          formRef.current?.reset()
+          reset()
+        }}
+        // Esc closes a <dialog> natively without going through close(), so it's
+        // intercepted here: the first press raises the overlay, and a second
+        // press while the overlay is up dismisses the overlay, not the form.
+        onCancel={(e) => {
+          if (confirming) {
+            e.preventDefault()
+            setConfirming(false)
+            return
+          }
+          if (!requestClose()) e.preventDefault()
+        }}
         onClick={(e) => e.target === e.currentTarget && close()}
         // Liquid Glass sheet, tinted dark enough that the form stays easy to read
         style={{ '--glass-dark': 0.86 } as React.CSSProperties}
-        className="hq-glass m-auto max-h-[calc(100dvh-32px)] w-[min(640px,calc(100%-32px))] overflow-hidden rounded-[24px] p-0 text-[#f4f1d6] backdrop:bg-[#0c181499] backdrop:backdrop-blur-[6px]"
+        className="hq-glass relative m-auto max-h-[calc(100dvh-32px)] w-[min(640px,calc(100%-32px))] overflow-hidden rounded-[24px] p-0 text-[#f4f1d6] backdrop:bg-[#0c181499] backdrop:backdrop-blur-[6px]"
       >
         <div data-modal-scroll className="relative max-h-[calc(100dvh-32px)] overflow-y-auto overscroll-contain p-9 max-[800px]:p-6">
           <button
@@ -93,7 +146,7 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
             we’d like to hear from you.
           </p>
 
-          <form onSubmit={onSubmit} onInput={() => state === 'sent' && reset()} className="grid grid-cols-2 gap-[17px] max-[800px]:grid-cols-1">
+          <form ref={formRef} onSubmit={onSubmit} onInput={() => state === 'sent' && reset()} className="grid grid-cols-2 gap-[17px] max-[800px]:grid-cols-1">
             <div data-stagger className={field}>
               <label htmlFor="c-name" className={label}>Name</label>
               <input id="c-name" name="name" autoComplete="name" required className={input} />
@@ -176,6 +229,44 @@ export function CareersProvider({ children }: { children: React.ReactNode }) {
             </p>
           </form>
         </div>
+
+        {/* Discard confirmation. Lives inside the <dialog> so focus stays trapped
+            in the top layer and the glass sheet shows through behind it. */}
+        {confirming && (
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="careers-discard-title"
+            aria-describedby="careers-discard-copy"
+            className="absolute inset-0 z-10 grid place-items-center rounded-[24px] bg-[#0c1814e6] p-6 backdrop-blur-[3px]"
+          >
+            <div className="w-full max-w-[380px] text-center">
+              <h3 id="careers-discard-title" className="m-0 text-[22px] font-bold leading-[1.2] tracking-[-.03em]">
+                Discard your application?
+              </h3>
+              <p id="careers-discard-copy" className="mb-7 mt-3 text-[15px] leading-[1.6] text-[#b8c5b3]">
+                You have details filled in that haven’t been sent yet. Closing now will clear them.
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  type="button"
+                  autoFocus
+                  onClick={() => setConfirming(false)}
+                  className={`${btn()} w-full cursor-pointer`}
+                >
+                  Keep editing
+                </button>
+                <button
+                  type="button"
+                  onClick={discard}
+                  className={`${btnGhost()} w-full cursor-pointer`}
+                >
+                  Discard and close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </dialog>
     </CareersContext.Provider>
   )

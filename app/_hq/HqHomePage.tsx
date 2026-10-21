@@ -13,6 +13,7 @@ import { InquiryProvider } from './components/Inquiry'
 import { CareersProvider } from './components/Careers'
 import Animations from './components/Animations'
 import LiquidCursor from './components/LiquidCursor'
+import ScrollToTop from './components/ScrollToTop'
 import { GlassDefs } from './components/Glass'
 
 // WAGMI HQ LLC single-page site, ported from the /chatgpt HTML prototype.
@@ -25,20 +26,25 @@ export default function HqHomePage() {
         <GlassDefs />
         <div aria-hidden="true" className="hq-aurora" />
         <Nav />
-        <main id="top" className="mx-auto max-w-290 px-8 max-[800px]:px-5">
-          <Hero />
-          <Clients />
-          <About />
-          <Work />
-          <Packages />
-          <Reviews />
-          <WhyUs />
-          <Process />
-          <FocusedProjects />
-          <Contact />
-          <Faq />
+        {/* The page container is shared, but <footer> stays a sibling of <main>
+            so the landmarks aren't nested. #top anchors the whole page. */}
+        <div id="top" className="mx-auto max-w-290 px-8 max-[800px]:px-5">
+          <main>
+            <Hero />
+            <Clients />
+            <About />
+            <Work />
+            <Packages />
+            <Reviews />
+            <WhyUs />
+            <Process />
+            <FocusedProjects />
+            <Contact />
+            <Faq />
+          </main>
           <Footer />
-        </main>
+        </div>
+        <ScrollToTop />
       </CareersProvider>
     </InquiryProvider>
   )

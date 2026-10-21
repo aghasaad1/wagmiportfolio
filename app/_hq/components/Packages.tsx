@@ -15,7 +15,8 @@ type Pkg = {
 }
 
 // Copy strings may use **bold** (rendered by Rich)
-const PACKAGES: Pkg[] = [
+// Exported so the Service JSON-LD (components/JsonLd.tsx) uses this exact copy.
+export const PACKAGES: Pkg[] = [
   {
     tag: '01 / Paid creative',
     name: 'The 60X Creative Test',

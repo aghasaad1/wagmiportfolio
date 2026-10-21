@@ -11,7 +11,11 @@ import { COPIES, useLoopCarousel } from './useLoopCarousel'
 function Avatar({ c, className }: { c: CaseStudy; className: string }) {
   return (
     <span className={`relative grid shrink-0 place-items-center overflow-hidden rounded-full border border-[#f4f1d629] bg-[#1a2b20] font-bold tracking-[-.04em] ${className}`}>
-      {c.photo ? <Image src={c.photo} alt="" fill sizes="96px" className="object-cover" /> : c.initials}
+      {c.photo ? (
+        <Image src={c.photo} alt={`${c.name} — ${c.role}`} fill sizes="96px" className="object-cover" />
+      ) : (
+        c.initials
+      )}
     </span>
   )
 }

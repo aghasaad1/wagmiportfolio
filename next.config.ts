@@ -1,8 +1,9 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
-    // OR using remotePatterns (recommended for Next.js 13+)
+    // `images.domains` is deprecated in Next 16 — remotePatterns below covers
+    // every host it used to allow, and is scoped to a path for safety.
     remotePatterns: [
       {
         protocol: 'https',
@@ -29,7 +30,6 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
-  // ... your other config
 }
 
-module.exports = nextConfig
+export default nextConfig
