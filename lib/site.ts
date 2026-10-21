@@ -41,5 +41,15 @@ export const ADDRESS = {
 export const LOGO_PATH = '/hq/wagmi-mark.svg'
 export const OG_IMAGE_PATH = '/opengraph-image'
 
+/**
+ * The legacy design's own page routes.
+ *
+ * Shared by robots.ts and sitemap.ts. proxy.ts needs the same list but can't
+ * import it — its matcher must be a static literal — so keep the two in sync.
+ * '/scroll-test' is deliberately absent: it's a direct-visit sandbox, already
+ * noindex and disallowed, and stays reachable whichever design is active.
+ */
+export const LEGACY_ROUTES = ['/services', '/work', '/careers', '/meet-the-team'] as const
+
 /** Absolute URL for a site-relative path. */
 export const absoluteUrl = (path = '/') => `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
